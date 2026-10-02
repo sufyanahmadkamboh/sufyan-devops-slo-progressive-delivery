@@ -1,0 +1,121 @@
+# SLOs for the orders API (route /api/orders)
+#
+#   Availability SLO: 99.5% of requests return a non-5xx response  -> error budget 0.5%
+#   Latency SLO:      99% of requests complete in under 300 ms     -> budget 1%
+#
+# Alerting follows the multi-window, multi-burn-rate approach from the
+# Google SRE Workbook: an alert needs BOTH a long window (significance) and a
+# short window (still happening now) to exceed the burn-rate threshold.
+#
+#   burn rate 14.4 over 1h/5m  -> 2% of a 30-day budget gone in 1 hour  -> page
+#   burn rate 6    over 6h/30m -> 5% of a 30-day budget gone in 6 hours -> page
+#   burn rate 3    over 1d/2h  -> 10% of a 30-day budget gone in 1 day  -> ticket
+groups:
+  - name: orders-api-sli-recording
+    interval: 15s
+    rules:
+      # ---- availability: error ratio per window ----
+      - record: slo:sli_error:ratio_rate5m
+        expr: |
+          (sum(rate(http_requests_total{app="orders-api",route="/api/orders",code=~"5.."}[5m])) or vector(0))
+          /
+          sum(rate(http_requests_total{app="orders-api",route="/api/orders"}[5m]))
+      - record: slo:sli_error:ratio_rate30m
+        expr: |
+          (sum(rate(http_requests_total{app="orders-api",route="/api/orders",code=~"5.."}[30m])) or vector(0))
+          /
+          sum(rate(http_requests_total{app="orders-api",route="/api/orders"}[30m]))
+      - record: slo:sli_error:ratio_rate1h
+        expr: |
+          (sum(rate(http_requests_total{app="orders-api",route="/api/orders",code=~"5.."}[1h])) or vector(0))
+          /
+          sum(rate(http_requests_total{app="orders-api",route="/api/orders"}[1h]))
+      - record: slo:sli_error:ratio_rate2h
+        expr: |
+          (sum(rate(http_requests_total{app="orders-api",route="/api/orders",code=~"5.."}[2h])) or vector(0))
+          /
+          sum(rate(http_requests_total{app="orders-api",route="/api/orders"}[2h]))
+      - record: slo:sli_error:ratio_rate6h
+        expr: |
+          (sum(rate(http_requests_total{app="orders-api",route="/api/orders",code=~"5.."}[6h])) or vector(0))
+          /
+          sum(rate(http_requests_total{app="orders-api",route="/api/orders"}[6h]))
+      - record: slo:sli_error:ratio_rate1d
+        expr: |
+          (sum(rate(http_requests_total{app="orders-api",route="/api/orders",code=~"5.."}[1d])) or vector(0))
+          /
+          sum(rate(http_requests_total{app="orders-api",route="/api/orders"}[1d]))
+
+      # ---- latency: share of requests slower than 300 ms ----
+      - record: slo:sli_latency_bad:ratio_rate5m
+        expr: |
+          1 - (
+            sum(rate(http_request_duration_seconds_bucket{app="orders-api",route="/api/orders",le="0.3"}[5m]))
+            /
+            sum(rate(http_request_duration_seconds_count{app="orders-api",route="/api/orders"}[5m]))
+          )
+      - record: slo:sli_latency_bad:ratio_rate1h
+        expr: |
+          1 - (
+            sum(rate(http_request_duration_seconds_bucket{app="orders-api",route="/api/orders",le="0.3"}[1h]))
+            /
+            sum(rate(http_request_duration_seconds_count{app="orders-api",route="/api/orders"}[1h]))
+          )
+
+      # ---- error budget: share of the availability budget still left (1-day lab window) ----
+      - record: slo:error_budget_remaining:ratio
+        expr: 1 - (slo:sli_error:ratio_rate1d / 0.005)
+
+  - name: orders-api-slo-alerts
+    rules:
+      - alert: OrdersApiErrorBudgetFastBurn
+        expr: |
+          slo:sli_error:ratio_rate1h > (14.4 * 0.005)
+          and
+          slo:sli_error:ratio_rate5m > (14.4 * 0.005)
+        for: 2m
+        labels:
+          severity: page
+          slo: orders-api-availability
+        annotations:
+          summary: orders-api is burning its availability error budget 14.4x faster than sustainable
+          runbook_url: https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery/blob/main/docs/runbook.md#fast-burn
+
+      - alert: OrdersApiErrorBudgetSlowBurn
+        expr: |
+          slo:sli_error:ratio_rate6h > (6 * 0.005)
+          and
+          slo:sli_error:ratio_rate30m > (6 * 0.005)
+        for: 15m
+        labels:
+          severity: page
+          slo: orders-api-availability
+        annotations:
+          summary: orders-api is burning its availability error budget 6x faster than sustainable
+          runbook_url: https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery/blob/main/docs/runbook.md#slow-burn
+
+      - alert: OrdersApiErrorBudgetTicketBurn
+        expr: |
+          slo:sli_error:ratio_rate1d > (3 * 0.005)
+          and
+          slo:sli_error:ratio_rate2h > (3 * 0.005)
+        for: 1h
+        labels:
+          severity: ticket
+          slo: orders-api-availability
+        annotations:
+          summary: orders-api error budget is draining 3x faster than sustainable over the last day
+          runbook_url: https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery/blob/main/docs/runbook.md#ticket-burn
+
+      - alert: OrdersApiLatencyBudgetFastBurn
+        expr: |
+          slo:sli_latency_bad:ratio_rate1h > (14.4 * 0.01)
+          and
+          slo:sli_latency_bad:ratio_rate5m > (14.4 * 0.01)
+        for: 2m
+        labels:
+          severity: page
+          slo: orders-api-latency
+        annotations:
+          summary: more than 14.4% of orders-api requests are slower than 300 ms
+          runbook_url: https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery/blob/main/docs/runbook.md#latency-burn

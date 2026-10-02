@@ -1,0 +1,112 @@
+# Unit tests for the SLO recording and alerting rules (run with: promtool test rules).
+# Each test feeds synthetic counter series and asserts which alerts fire, and when.
+rule_files:
+  - ../rules/orders-api-slo.rules.yaml
+
+evaluation_interval: 1m
+
+tests:
+  # 10% of requests fail: 7x above the fast-burn threshold (7.2%). The page must fire after the 2m "for".
+  - name: fast burn pages within minutes
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{app="orders-api",route="/api/orders",method="GET",code="200"}'
+        values: '0+90x120'
+      - series: 'http_requests_total{app="orders-api",route="/api/orders",method="GET",code="500"}'
+        values: '0+10x120'
+    promql_expr_test:
+      - expr: round(slo:sli_error:ratio_rate5m, 0.001)
+        eval_time: 10m
+        exp_samples:
+          - labels: '{}'
+            value: 0.1
+    alert_rule_test:
+      - eval_time: 10m
+        alertname: OrdersApiErrorBudgetFastBurn
+        exp_alerts:
+          - exp_labels:
+              severity: page
+              slo: orders-api-availability
+            exp_annotations:
+              summary: orders-api is burning its availability error budget 14.4x faster than sustainable
+              runbook_url: https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery/blob/main/docs/runbook.md#fast-burn
+      # The slow-burn alert is pending (needs 15m) and must not page yet.
+      - eval_time: 10m
+        alertname: OrdersApiErrorBudgetSlowBurn
+        exp_alerts: []
+
+  # 0.1% errors is well inside the 0.5% budget: nothing may fire, even after 2 hours.
+  - name: healthy service stays silent
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{app="orders-api",route="/api/orders",method="GET",code="200"}'
+        values: '0+999x150'
+      - series: 'http_requests_total{app="orders-api",route="/api/orders",method="GET",code="500"}'
+        values: '0+1x150'
+    alert_rule_test:
+      - eval_time: 2h
+        alertname: OrdersApiErrorBudgetFastBurn
+        exp_alerts: []
+      - eval_time: 2h
+        alertname: OrdersApiErrorBudgetSlowBurn
+        exp_alerts: []
+      - eval_time: 2h
+        alertname: OrdersApiErrorBudgetTicketBurn
+        exp_alerts: []
+    promql_expr_test:
+      - expr: slo:error_budget_remaining:ratio
+        eval_time: 2h
+        exp_samples:
+          - labels: 'slo:error_budget_remaining:ratio'
+            value: 0.8
+
+  # 4% errors: below the fast-burn threshold (7.2%) but above slow burn (3%).
+  # Fast burn must stay silent; slow burn must page after its 15m "for".
+  - name: sustained moderate errors page via slow burn only
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{app="orders-api",route="/api/orders",method="GET",code="200"}'
+        values: '0+96x240'
+      - series: 'http_requests_total{app="orders-api",route="/api/orders",method="GET",code="500"}'
+        values: '0+4x240'
+    alert_rule_test:
+      - eval_time: 1h
+        alertname: OrdersApiErrorBudgetFastBurn
+        exp_alerts: []
+      - eval_time: 1h
+        alertname: OrdersApiErrorBudgetSlowBurn
+        exp_alerts:
+          - exp_labels:
+              severity: page
+              slo: orders-api-availability
+            exp_annotations:
+              summary: orders-api is burning its availability error budget 6x faster than sustainable
+              runbook_url: https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery/blob/main/docs/runbook.md#slow-burn
+      - eval_time: 3h
+        alertname: OrdersApiErrorBudgetTicketBurn
+        exp_alerts:
+          - exp_labels:
+              severity: ticket
+              slo: orders-api-availability
+            exp_annotations:
+              summary: orders-api error budget is draining 3x faster than sustainable over the last day
+              runbook_url: https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery/blob/main/docs/runbook.md#ticket-burn
+
+  # Half of all requests are slower than 300 ms: the latency page must fire.
+  - name: latency regression pages
+    interval: 1m
+    input_series:
+      - series: 'http_request_duration_seconds_bucket{app="orders-api",route="/api/orders",le="0.3"}'
+        values: '0+50x60'
+      - series: 'http_request_duration_seconds_count{app="orders-api",route="/api/orders"}'
+        values: '0+100x60'
+    alert_rule_test:
+      - eval_time: 10m
+        alertname: OrdersApiLatencyBudgetFastBurn
+        exp_alerts:
+          - exp_labels:
+              severity: page
+              slo: orders-api-latency
+            exp_annotations:
+              summary: more than 14.4% of orders-api requests are slower than 300 ms
+              runbook_url: https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery/blob/main/docs/runbook.md#latency-burn
