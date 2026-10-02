@@ -8,6 +8,9 @@ Every release of the service goes out as a **canary**. While traffic shifts 20% 
 
 ![ci](https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery/actions/workflows/ci.yaml/badge.svg)
 
+> 📚 **New to DevOps? Start with the [study guide](study/README.md).** It teaches every tool in this project from zero: what it is, why it's used here, how it's wired in, and hands-on labs.
+> It covers Docker, Kubernetes, kind, Helm, SLOs, Prometheus, Argo Rollouts, Grafana, GitHub Actions and the security tools, plus 8 guided labs and 25 interview questions.
+
 ---
 
 ## 1. Problem statement
@@ -87,6 +90,7 @@ scripts/                up, release, e2e, chaos and security tests, down
 ci/fast-values.yaml     accelerated timings for automated tests
 kind/cluster.yaml       local cluster definition
 docs/                   architecture, runbook, troubleshooting, test results
+study/                  beginner study guide: every tool explained, labs, glossary, interview questions
 linkedin/               project write-up
 ```
 
@@ -205,7 +209,22 @@ docker image rm $(docker image ls 'orders-api' -q)   # optional: remove built im
 - **Long-term metrics storage** (Thanos or Mimir), for a true 30-day SLO window.
 - **Signed images** (cosign) and admission-time signature verification.
 
-## 18. Skills demonstrated
+## 18. Learning resources
+
+The **[study guide](study/README.md)** is a self-contained course built around this repository.
+
+| Chapter | Topic |
+|---|---|
+| [0](study/00-big-picture.md) | The big picture, without jargon |
+| [1](study/01-docker.md) – [4](study/04-helm.md) | Docker, Kubernetes, kind, Helm |
+| [5](study/05-sre-slo-basics.md) – [8](study/08-grafana.md) | SLOs and error budgets, Prometheus and PromQL, Argo Rollouts, Grafana |
+| [9](study/09-github-actions.md) – [10](study/10-quality-security-tools.md) | GitHub Actions, and the quality and security tools |
+| [11](study/11-how-it-fits-together.md) | One request and one release traced through every tool |
+| [12](study/12-hands-on-labs.md) | 8 hands-on labs |
+
+Also included: a [glossary](study/glossary.md) and [25 interview questions with answers](study/interview-questions.md).
+
+## 19. Skills demonstrated
 
 **SRE:**
 - SLIs, SLOs and error budgets
