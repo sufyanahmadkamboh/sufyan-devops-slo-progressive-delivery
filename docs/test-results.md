@@ -4,7 +4,22 @@
 
 **Environment:** local **kind v0.33** cluster (1 control plane + 2 workers) on Docker Desktop, with Argo Rollouts v1.10.0, Prometheus v3.15.0, Grafana v13.2.3 and Helm 4.2. The end-to-end runs used `ci/fast-values.yaml`: analysis every 15 s, 30 s pauses. Thresholds are the same as the defaults.
 
-**Not cloud-tested:** this project was not deployed to a managed cloud cluster. All runtime results below come from the local kind cluster. GitHub Actions runs the same suite on every push.
+**Not cloud-tested:** this project was not deployed to a managed cloud cluster. The runtime results below come from the local kind cluster.
+
+**CI confirmation:** the same suite passed on GitHub-hosted runners: [CI run 37076324724](https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery/actions/runs/37076324724).
+
+| Stage | Result |
+|---|---|
+| Static stage (pytest, ruff, shellcheck, promtool, helm lint, kubeconform) | ✅ |
+| Image stage (build and Trivy) | ✅ |
+| End-to-end stage on a fresh kind cluster | ✅ |
+
+**End-to-end stage in CI:**
+- healthy 1.1.0 promoted
+- 1.2.0 aborted on `canary-error-ratio`
+- 1.3.0 aborted on `canary-p95-latency`
+- Prometheus outage aborted the canary with phase `Error`
+- the NetworkPolicy blocked another namespace
 
 ## Static validation
 
