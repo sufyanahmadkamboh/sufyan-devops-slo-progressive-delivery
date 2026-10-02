@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SLO-Driven Progressive Delivery: architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0c1522; --panel:#132235; --line:#2a4262; --ink:#eaf1fa; --muted:#93a7c1; --blue:#3b82d6; --sky:#9cc3f0; --ok:#4cc286; --bad:#ff7b72; --amber:#ffd479; }
+  * { box-sizing:border-box; margin:0; }
+  body { width:1200px; height:627px; background: radial-gradient(900px 400px at 100% 0%, rgba(59,130,214,.22), transparent 60%), var(--bg);
+         font-family:Inter, "Segoe UI", sans-serif; color:var(--ink); padding:30px 40px; overflow:hidden; position:relative; }
+  body::before { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(156,195,240,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(156,195,240,.05) 1px,transparent 1px); background-size:40px 40px; }
+  .wrap { position:relative; }
+  .kicker { color:var(--sky); font-weight:700; font-size:14px; letter-spacing:1.5px; text-transform:uppercase; }
+  h1 { font-size:34px; font-weight:800; letter-spacing:-.5px; margin:4px 0 4px; }
+  .sub { color:var(--muted); font-size:16px; }
+  .flow { display:grid; grid-template-columns: 190px 30px 470px 30px 1fr; align-items:center; margin-top:26px; }
+  .box { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
+  .box h3 { font-size:15px; margin-bottom:6px; display:flex; gap:8px; align-items:center; }
+  .box p, .box li { font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .box ul { padding-left:16px; }
+  .arrow { text-align:center; color:var(--sky); font-size:24px; }
+  .tag { display:inline-block; font-size:11px; font-weight:700; padding:2px 7px; border-radius:6px; background:rgba(59,130,214,.2); color:var(--sky); }
+  .steps { display:flex; gap:6px; margin:10px 0 8px; }
+  .step { flex:1; text-align:center; font-family:"JetBrains Mono", monospace; font-size:12px; padding:7px 0; border-radius:8px; background:#0e1a2a; border:1px solid var(--line); }
+  .step b { display:block; color:var(--sky); font-size:13px; }
+  .gate { margin-top:8px; border:1px dashed var(--blue); border-radius:10px; padding:9px 12px; }
+  .gate .mono { font-family:"JetBrains Mono", monospace; font-size:12px; color:var(--ink); }
+  .decide { display:grid; gap:10px; }
+  .ok { border-color:rgba(76,194,134,.6); } .ok h3 { color:var(--ok); }
+  .bad { border-color:rgba(255,123,114,.6); } .bad h3 { color:var(--bad); }
+  .bottom { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:14px; margin-top:16px; }
+  .footer { position:absolute; bottom:-6px; left:0; right:0; display:flex; justify-content:space-between; color:var(--muted); font-size:12.5px; }
+  .footer b { color:var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">DevOps project · SRE · Progressive delivery</div>
+  <h1>SLO-Driven Progressive Delivery with Automated Rollback</h1>
+  <div class="sub">Every release is a canary. Prometheus SLIs decide: promote or roll back, with no human in the loop.</div>
+
+  <div class="flow">
+    <div class="box">
+      <h3>⚙️ GitHub Actions</h3>
+      <ul><li>pytest · ruff · shellcheck</li><li>promtool rule tests</li><li>kubeconform · helm lint</li><li>Trivy image scan</li><li>e2e on kind</li></ul>
+    </div>
+    <div class="arrow">➜</div>
+    <div class="box">
+      <h3>🚢 Argo Rollouts canary <span class="tag">Helm release</span></h3>
+      <div class="steps">
+        <div class="step"><b>20%</b>canary</div><div class="step"><b>40%</b>canary</div><div class="step"><b>60%</b>canary</div><div class="step"><b>80%</b>canary</div><div class="step"><b>100%</b>promote</div>
+      </div>
+      <div class="gate">
+        <p style="color:var(--sky);font-weight:600;margin-bottom:4px">Background analysis · canary pods only · every 30 s</p>
+        <div class="mono">error ratio ≤ 7.2%  <span style="color:var(--muted)">(0.5% budget × 14.4 burn)</span></div>
+        <div class="mono">p95 latency ≤ 300 ms</div>
+      </div>
+    </div>
+    <div class="arrow">➜</div>
+    <div class="decide">
+      <div class="box ok"><h3>✔ SLOs met</h3><p>Promoted step by step to 100%</p></div>
+      <div class="box bad"><h3>✖ SLO breached</h3><p>Rollout aborted, canary removed, stable serves 100%</p></div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="box"><h3>📈 Prometheus</h3><p>Scrapes pods with their revision hash · SLI recording rules · multi-window burn-rate alerts (14.4x / 6x / 3x)</p></div>
+    <div class="box"><h3>📊 Grafana</h3><p>SLO &amp; error-budget dashboard · error ratio and p95 per revision · traffic split per version</p></div>
+    <div class="box"><h3>🧪 Proven on kind</h3><p>Good release promoted · error &amp; latency regressions rolled back · Prometheus outage fails safe</p></div>
+  </div>
+</div>
+<div class="footer" style="padding:0 40px 18px"><span><b>Sufyan Ahmad</b> · DevOps Engineer</span><span>github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery</span></div>
+</body>
+</html>
