@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Local tooling and output
+diagnostics/
+*.log
+kubeconform
+.tools/
+
+# Secrets and local configuration: never commit
+.env
+*.env
+*.pem
+*.key
+kubeconfig*
+*.kubeconfig
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
