@@ -9,6 +9,9 @@ This guide is for engineers who are **new to DevOps**. You don't need to know an
 5. **Try it:** commands to run in the lab
 6. **Check yourself:** short questions (answers at the end of each chapter)
 
+> 📄 **Prefer one file?** Download the whole guide as a single PDF: **[study-guide.pdf](study-guide.pdf)** (42 pages; answers expanded, ready to print).
+> Rebuild it after editing with `python study/tools/build_pdf.py`.
+
 ## How to use this guide
 
 Read the chapters in order. Each one builds on the previous ones. Do the "Try it" sections with the lab running (`make up`). Reading alone won't make the ideas stick; running the commands will.
