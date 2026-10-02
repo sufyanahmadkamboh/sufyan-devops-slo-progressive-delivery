@@ -1,0 +1,18 @@
+# The single client-facing Service. It selects stable AND canary pods, so traffic follows the replica
+# ratio that Argo Rollouts sets at each canary step (no service mesh or ingress controller required).
+#
+# Deliberately no separate stable/canary Services: Argo Rollouts rewrites their selectors at runtime,
+# which conflicts with Helm 4 server-side apply ownership of .spec.selector (see docs/troubleshooting.md).
+# The analysis identifies canary pods by their rollouts_pod_template_hash label instead.
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-api
+  labels: {{- include "orders-api.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: orders-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

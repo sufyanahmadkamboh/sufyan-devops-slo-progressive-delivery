@@ -1,0 +1,7 @@
+apiVersion: v2
+name: orders-api
+description: Orders API delivered with SLO-gated canary releases (Argo Rollouts + Prometheus analysis)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords: [progressive-delivery, canary, slo, argo-rollouts, prometheus]

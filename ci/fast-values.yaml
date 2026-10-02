@@ -1,0 +1,7 @@
+# Shorter timings for the automated end-to-end test. The decision logic and thresholds are unchanged;
+# only the waiting is shorter, so a full test (3 releases) finishes in about 7 minutes.
+analysis:
+  initialDelay: 20s
+  interval: 15s
+canary:
+  pauseDuration: 30s

@@ -1,0 +1,36 @@
+{{- if .Values.loadgen.enabled }}
+# Constant synthetic traffic, so every canary step produces SLI samples. Reuses the application image.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-loadgen
+  labels: {{- include "orders-api.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-loadgen
+  template:
+    metadata:
+      labels:
+        app: orders-loadgen
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {{- include "orders-api.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: loadgen
+          image: "{{ .Values.image.repository }}:{{ .Values.loadgen.imageTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: ["orders_api.loadgen"]
+          env:
+            - name: TARGET_URL
+              value: http://orders-api/api/orders
+            - name: REQUESTS_PER_SECOND
+              value: {{ .Values.loadgen.requestsPerSecond | quote }}
+            - name: CONCURRENCY
+              value: {{ .Values.loadgen.concurrency | quote }}
+          resources:
+            requests: { cpu: 20m, memory: 48Mi }
+            limits: { cpu: 200m, memory: 96Mi }
+          securityContext: {{- include "orders-api.containerSecurityContext" . | nindent 12 }}
+{{- end }}

@@ -1,0 +1,45 @@
+# Container image. In the kind lab the image is built locally and loaded with `kind load`.
+image:
+  repository: orders-api
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+replicas: 5
+
+# Fault injection, used ONLY to reproduce a bad release in tests. Keep both at 0 for real releases.
+fault:
+  errorRate: "0"
+  latencyMs: "0"
+
+# Service level objectives the canary is judged against.
+slo:
+  availabilityTarget: 0.995   # 99.5% non-5xx -> error budget 0.5%
+  latencyTargetSeconds: 0.3   # p95 must stay under 300 ms
+
+analysis:
+  prometheusAddress: http://prometheus.monitoring.svc.cluster.local:9090
+  # A canary may burn error budget at most this many times faster than sustainable.
+  # 14.4x is the same threshold as the fast-burn page, so a canary that would page is never promoted.
+  maxBurnRate: 14.4
+  initialDelay: 30s
+  interval: 30s
+  failureLimit: 1            # abort on the 2nd failed measurement
+  consecutiveErrorLimit: 4   # Prometheus unreachable 5 times in a row -> analysis Error -> abort (fail safe)
+
+canary:
+  weights: [20, 40, 60, 80]  # with 5 replicas, each step moves exactly one pod
+  pauseDuration: 60s
+
+resources:
+  requests: { cpu: 50m, memory: 64Mi }
+  limits: { cpu: 250m, memory: 128Mi }
+
+networkPolicy:
+  enabled: true
+  monitoringNamespace: monitoring
+
+loadgen:
+  enabled: true
+  imageTag: "1.0.0"          # the generator does not change between releases
+  requestsPerSecond: 20
+  concurrency: 4

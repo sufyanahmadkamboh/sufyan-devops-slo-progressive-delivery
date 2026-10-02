@@ -1,0 +1,66 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: orders-api
+  labels: {{- include "orders-api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: orders-api
+  template:
+    metadata:
+      labels:
+        app: orders-api
+        app.kubernetes.io/version: {{ .Values.image.tag | quote }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: /metrics
+    spec:
+      serviceAccountName: orders-api
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 20
+      securityContext: {{- include "orders-api.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: orders-api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: APP_VERSION
+              value: {{ .Values.image.tag | quote }}
+            - name: FAULT_ERROR_RATE
+              value: {{ .Values.fault.errorRate | quote }}
+            - name: FAULT_LATENCY_MS
+              value: {{ .Values.fault.latencyMs | quote }}
+          readinessProbe:
+            httpGet: { path: /readyz, port: http }
+            periodSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            periodSeconds: 10
+            failureThreshold: 3
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          securityContext: {{- include "orders-api.containerSecurityContext" . | nindent 12 }}
+  strategy:
+    canary:
+      # Background analysis: SLO checks run continuously from the first traffic shift until full promotion.
+      # A failed check aborts the rollout and all traffic returns to the stable revision.
+      analysis:
+        startingStep: 1
+        templates:
+          - templateName: orders-api-slo
+        args:
+          - name: canary-hash
+            valueFrom:
+              podTemplateHashValue: Latest
+      steps:
+        {{- range .Values.canary.weights }}
+        - setWeight: {{ . }}
+        - pause: { duration: {{ $.Values.canary.pauseDuration }} }
+        {{- end }}

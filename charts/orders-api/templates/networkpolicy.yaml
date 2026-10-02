@@ -1,0 +1,22 @@
+{{- if .Values.networkPolicy.enabled }}
+# Only workloads in this namespace (clients, load generator) and Prometheus may reach the API.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: orders-api
+  labels: {{- include "orders-api.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: orders-api
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector: {}
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.monitoringNamespace }}
+      ports:
+        - port: 8080
+          protocol: TCP
+{{- end }}
