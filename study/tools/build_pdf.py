@@ -1,3 +1,4 @@
+# ruff: noqa: E501  (long lines are embedded CSS/HTML for the printed layout)
 """Compile the study guide (study/*.md) into one printable PDF: study/study-guide.pdf.
 
 Usage:
