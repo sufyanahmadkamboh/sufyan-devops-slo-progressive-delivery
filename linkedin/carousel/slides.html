@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LinkedIn carousel: SLO-driven progressive delivery</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0b1420; --panel:#13233a; --line:#284468; --ink:#f1f6fc; --muted:#a9bbd2; --blue:#3b82d6; --sky:#9cc3f0; --ok:#4cc286; --bad:#ff7b72; --amber:#ffd479; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1080px; height:1350px; overflow:hidden; }
+  body { background: radial-gradient(900px 600px at 100% 0%, rgba(59,130,214,.28), transparent 60%), radial-gradient(700px 500px at 0% 100%, rgba(156,195,240,.10), transparent 60%), var(--bg);
+         font-family: Inter, "Segoe UI", sans-serif; color: var(--ink); position: relative; }
+  body::before { content:""; position:absolute; inset:0; background-image: linear-gradient(rgba(156,195,240,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(156,195,240,.05) 1px, transparent 1px); background-size: 54px 54px; }
+  .slide { display:none; position:absolute; inset:0; padding: 80px 76px 120px; flex-direction: column; justify-content: center; }
+  .slide.on { display:flex; }
+  .kicker { color: var(--sky); font-weight: 800; font-size: 29px; letter-spacing: 3px; text-transform: uppercase; }
+  h1 { font-size: 84px; line-height: 1.05; font-weight: 900; letter-spacing: -1.5px; margin: 22px 0 26px; }
+  h2 { font-size: 70px; line-height: 1.08; font-weight: 900; letter-spacing: -1px; margin: 18px 0 36px; }
+  p.lead { font-size: 40px; line-height: 1.4; color: var(--muted); }
+  .hl { color: var(--sky); } .ok { color: var(--ok); } .bad { color: var(--bad); } .amber { color: var(--amber); }
+  .card { background: var(--panel); border: 2px solid var(--line); border-radius: 26px; padding: 30px 34px; }
+  .row { display:flex; gap: 22px; align-items: stretch; }
+  .col { display:flex; flex-direction: column; gap: 22px; }
+  .big { font-size: 40px; line-height: 1.36; }
+  .small { font-size: 31px; line-height: 1.4; color: var(--muted); }
+  .emoji { font-size: 56px; line-height: 1; }
+  .num { width: 74px; height: 74px; flex: none; border-radius: 50%; background: var(--blue); color: #fff; display:grid; place-items:center; font-weight: 900; font-size: 36px; }
+  .step { display:flex; gap: 24px; align-items: flex-start; }
+  .step b { font-size: 40px; display:block; margin-bottom: 4px; }
+  .mono { font-family: "JetBrains Mono", Consolas, monospace; }
+  .code { background:#060c14; border:2px solid var(--line); border-radius: 18px; padding: 24px 28px; font-family:"JetBrains Mono", monospace; font-size: 29px; line-height: 1.5; color:#dbe8f7; white-space: pre; overflow: hidden; }
+  .code .c { color:#7f93ad; }
+  .pods { display:flex; gap: 18px; margin: 10px 0; }
+  .pod { width: 150px; height: 150px; border-radius: 22px; display:grid; place-items:center; font-size: 32px; font-weight: 800; border: 3px solid var(--line); background: #0e1c2e; }
+  .pod.old { color: var(--ok); border-color: rgba(76,194,134,.6); }
+  .pod.new { color: var(--amber); border-color: var(--amber); background: rgba(255,212,121,.08); }
+  .pod.dead { color: var(--bad); border-color: var(--bad); background: rgba(255,123,114,.08); }
+  .footer { position:absolute; left: 80px; right: 80px; bottom: 44px; display:flex; justify-content: space-between; align-items: center; font-size: 25px; color: var(--muted); }
+  .footer b { color: var(--ink); }
+  .swipe { color: var(--sky); font-weight: 700; }
+  .tile { flex:1; background: var(--panel); border:2px solid var(--line); border-radius: 24px; padding: 26px 26px; }
+  .tile .t { font-size: 29px; color: var(--muted); font-weight: 600; }
+  .tile .v { font-size: 64px; font-weight: 900; margin: 6px 0 4px; }
+  .tile .d { font-size: 28px; color: var(--muted); line-height: 1.35; }
+  .arch { display:grid; grid-template-columns: 1fr; gap: 16px; }
+  .abox { background: var(--panel); border: 2px solid var(--line); border-radius: 20px; padding: 22px 28px; font-size: 33px; line-height: 1.35; }
+  .abox b { color: var(--sky); }
+  .down { text-align:center; font-size: 38px; color: var(--sky); line-height: 1; }
+  .tag { display:inline-block; font-size: 29px; font-weight: 700; padding: 8px 16px; border-radius: 12px; background: rgba(59,130,214,.2); color: var(--sky); margin: 0 10px 12px 0; }
+  ul.tick { list-style:none; display:flex; flex-direction:column; gap: 18px; }
+  ul.tick li { font-size: 39px; line-height: 1.35; padding-left: 52px; position: relative; }
+  ul.tick li::before { content: "✓"; position:absolute; left:0; top:0; color: var(--ok); font-weight: 900; }
+  ul.cross li::before { content: "✗"; color: var(--bad); }
+</style>
+</head>
+<body>
+
+<!-- 1 · COVER: what it is + pain -->
+<section class="slide" data-n="1">
+  <div class="kicker">DevOps project · explained simply</div>
+  <h1>What if a bad release could <span class="hl">undo itself</span>… in under a minute?</h1>
+  <p class="lead">I built a system that releases new software to a few users first, <b style="color:var(--ink)">measures</b> if it's healthy, and automatically rolls it back if it's not.</p>
+  <div class="row" style="margin-top:48px">
+    <div class="card" style="flex:1"><div class="emoji">😰</div><p class="big" style="margin-top:14px">Bad release hits <b class="bad">everyone</b></p></div>
+    <div class="card" style="flex:1"><div class="emoji">🛡️</div><p class="big" style="margin-top:14px">Bad release hits <b class="ok">a few users</b>, then disappears</p></div>
+  </div>
+  <p class="small" style="margin-top:auto">SLO-Driven Progressive Delivery with Automated Rollback · Kubernetes · Argo Rollouts · Prometheus</p>
+</section>
+
+<!-- 2 · PAIN POINT -->
+<section class="slide" data-n="2">
+  <div class="kicker">The problem</div>
+  <h2>Most teams release like this 👇</h2>
+  <div class="col">
+    <div class="step"><div class="num">1</div><div><b>New version replaces the old one, for everyone</b><span class="small">All 5 servers switch at once.</span></div></div>
+    <div class="pods"><div class="pod dead">v2 ✗</div><div class="pod dead">v2 ✗</div><div class="pod dead">v2 ✗</div><div class="pod dead">v2 ✗</div><div class="pod dead">v2 ✗</div></div>
+    <div class="step"><div class="num">2</div><div><b>A hidden bug reaches 100% of users</b><span class="small">The deployment said "success". Users disagree.</span></div></div>
+    <div class="step"><div class="num">3</div><div><b>Someone gets an alarm at 3 AM</b><span class="small">…and has to decide, half asleep: "is it bad enough to undo?"</span></div></div>
+    <div class="step"><div class="num">4</div><div><b>Rollback is manual, slow and stressful</b><span class="small">Every minute of delay = more angry customers.</span></div></div>
+  </div>
+</section>
+
+<!-- 3 · THE IDEA -->
+<section class="slide" data-n="3">
+  <div class="kicker">The idea, like a restaurant 🍽️</div>
+  <h2>Test the new dish on <span class="hl">one table</span> first</h2>
+  <div class="col">
+    <div class="pods"><div class="pod new">NEW</div><div class="pod old">old</div><div class="pod old">old</div><div class="pod old">old</div><div class="pod old">old</div></div>
+    <p class="big">1 of 5 servers gets the new version, so only <b class="hl">~20% of users</b> see it.</p>
+    <div class="card"><p class="big">Every 30 seconds a computer checks two numbers for the <b>new version only</b>:</p>
+      <p class="big" style="margin-top:12px">❌ How many requests <b>fail</b>? &nbsp; ⏱️ How <b>slow</b> is it?</p></div>
+    <div class="row">
+      <div class="card" style="flex:1"><p class="big"><b class="ok">Healthy?</b><br>20% → 40% → 60% → 80% → 100%</p></div>
+      <div class="card" style="flex:1"><p class="big"><b class="bad">Unhealthy?</b><br>Removed. Everyone back on the old version.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · WHY & WHEN -->
+<section class="slide" data-n="4">
+  <div class="kicker">Why &amp; when to use it</div>
+  <h2>Use this when a bad release <span class="hl">costs you</span></h2>
+  <ul class="tick">
+    <li>You release often: weekly, daily, many times a day</li>
+    <li>Real customers use the service: shops, payments, apps</li>
+    <li>Someone is on call and you want fewer 3 AM decisions</li>
+    <li>You want "is it healthy?" to be a <b>number</b>, not an opinion</li>
+    <li>You run on Kubernetes and already have (or want) metrics</li>
+  </ul>
+  <div class="card" style="margin-top:34px">
+    <p class="small" style="font-weight:700;color:var(--ink);font-size:29px;margin-bottom:10px">Probably not needed when…</p>
+    <ul class="tick cross"><li style="font-size:28px">a tiny internal tool has almost no traffic to measure</li><li style="font-size:28px">you release twice a year and can test everything by hand</li></ul>
+  </div>
+</section>
+
+<!-- 5 · HOW TO USE IT -->
+<section class="slide" data-n="5">
+  <div class="kicker">How a team uses it</div>
+  <h2>Release as usual. The system decides.</h2>
+  <div class="col">
+    <div class="step"><div class="num">1</div><div><b>Agree on a target (SLO)</b><span class="small">"99.5% of requests must succeed, 95% must be faster than 300 ms."</span></div></div>
+    <div class="step"><div class="num">2</div><div><b>The app reports its numbers</b><span class="small">Requests, errors and speed, collected by Prometheus every 5 seconds.</span></div></div>
+    <div class="step"><div class="num">3</div><div><b>Ship a new version with one command</b><span class="small mono">helm upgrade … --set image.tag=1.2.0</span></div></div>
+    <div class="step"><div class="num">4</div><div><b>Argo Rollouts releases it step by step</b><span class="small">Checking the numbers for the new version at every step.</span></div></div>
+    <div class="step"><div class="num">5</div><div><b>Watch it live on the dashboard</b><span class="small">Promoted ✅ or rolled back ❌. Nobody had to wake up.</span></div></div>
+  </div>
+</section>
+
+<!-- 6 · ARCHITECTURE -->
+<section class="slide" data-n="6">
+  <div class="kicker">Architecture</div>
+  <h2 style="margin-bottom:24px">How the pieces talk</h2>
+  <div class="arch">
+    <div class="abox"><b>GitHub Actions</b>: tests every change: unit tests, security scan, and a full rehearsal on a test cluster</div>
+    <div class="down">▼</div>
+    <div class="abox"><b>Helm</b>: installs the new version with one command</div>
+    <div class="down">▼</div>
+    <div class="abox"><b>Argo Rollouts</b>: moves traffic 20% → 100% and makes the final call</div>
+    <div class="down">▲ ▼ &nbsp;<span style="font-size:24px;color:var(--muted)">"Is the new version healthy?"</span></div>
+    <div class="abox"><b>Prometheus</b>: collects errors &amp; speed from every server, labelled by version</div>
+    <div class="down">▼</div>
+    <div class="abox"><b>Grafana</b>: shows it all on a live dashboard</div>
+  </div>
+  <p class="small" style="margin-top:22px">Everything runs on <b style="color:var(--ink)">Kubernetes</b>; I tested it on <b style="color:var(--ink)">kind</b> (Kubernetes on my laptop, free).</p>
+</section>
+
+<!-- 7 · IMPLEMENTATION -->
+<section class="slide" data-n="7">
+  <div class="kicker">Implementation · the decision rule</div>
+  <h2>The new version must pass <span class="hl">both</span> checks</h2>
+  <div class="row">
+    <div class="tile"><div class="t">❌ Failed requests</div><div class="v">≤ 7.2%</div><div class="d">= 0.5% error budget × 14.4. The same line that would wake up the on-call engineer.</div></div>
+    <div class="tile"><div class="t">⏱️ Speed (95% of requests)</div><div class="v">≤ 300 ms</div><div class="d">Measured on the new version only, never mixed with the old one.</div></div>
+  </div>
+  <div class="code" style="margin-top:26px"><span class="c"># checked every 30 s, for the NEW version only</span>
+successCondition: result[0] &lt;= 0.0720
+failureLimit: 1        <span class="c"># 2 bad checks → undo</span>
+consecutiveErrorLimit: 4 <span class="c"># can't measure? → undo</span></div>
+  <p class="big" style="margin-top:26px">🔒 <b>Safety first:</b> if monitoring is broken or the new version gets no traffic, the release is <b class="bad">not</b> promoted. No proof = no promotion.</p>
+</section>
+
+<!-- 8 · RESULTS -->
+<section class="slide" data-n="8">
+  <div class="kicker">Does it work? I tested it</div>
+  <h2>Real results from my test cluster</h2>
+  <div class="col">
+    <div class="row">
+      <div class="tile"><div class="t">✅ Healthy version</div><div class="v ok">Promoted</div><div class="d">passed 9/9 checks, 0% errors, 24 ms</div></div>
+      <div class="tile"><div class="t">❌ 25% of requests failing</div><div class="v bad">47 s</div><div class="d">to detect &amp; roll back automatically</div></div>
+    </div>
+    <div class="row">
+      <div class="tile"><div class="t">🐢 600 ms slower</div><div class="v bad">46 s</div><div class="d">to detect &amp; roll back automatically</div></div>
+      <div class="tile"><div class="t">💥 Monitoring switched off</div><div class="v amber">Refused</div><div class="d">to promote an unverified release (60 s)</div></div>
+    </div>
+  </div>
+  <p class="small" style="margin-top:28px">Tested on a local kind cluster and re-run automatically in GitHub Actions on every change. A lab project, not production traffic.</p>
+</section>
+
+<!-- 9 · STUDY MATERIAL -->
+<section class="slide" data-n="9">
+  <div class="kicker">New to DevOps? Start here 📚</div>
+  <h2>I wrote a free study guide for this project</h2>
+  <p class="big">No prior knowledge needed. For every tool: <b>what</b> it is, <b>why</b> it's used, <b>how</b> it's connected, and commands to try.</p>
+  <div style="margin:26px 0">
+    <span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">kind</span><span class="tag">Helm</span><span class="tag">SLOs &amp; error budgets</span><span class="tag">Prometheus</span><span class="tag">Argo Rollouts</span><span class="tag">Grafana</span><span class="tag">GitHub Actions</span><span class="tag">Trivy</span>
+  </div>
+  <div class="row">
+    <div class="tile"><div class="v">13</div><div class="d">chapters, from zero</div></div>
+    <div class="tile"><div class="v">8</div><div class="d">hands-on labs</div></div>
+    <div class="tile"><div class="v">25</div><div class="d">interview questions with answers</div></div>
+  </div>
+  <p class="big" style="margin-top:26px">📄 Also as one <b>42-page PDF</b> you can download and print.</p>
+</section>
+
+<!-- 10 · HOW TO IMPLEMENT -->
+<section class="slide" data-n="10">
+  <div class="kicker">Try it yourself</div>
+  <h2>Run it on your laptop in ~3 minutes</h2>
+  <p class="small" style="margin-bottom:18px">You need: Docker, kind, kubectl, helm (all free)</p>
+  <div class="code" style="font-size:25px"><span class="c"># 1. get the code</span>
+git clone github.com/sufyanahmadkamboh/
+  sufyan-devops-slo-progressive-delivery
+<span class="c"># 2. build everything (cluster + monitoring + app)</span>
+make up
+<span class="c"># 3. release a good version → watch it get promoted</span>
+scripts/release.sh 1.1.0
+<span class="c"># 4. release a broken one → watch it roll back</span>
+scripts/release.sh 1.2.0 --inject-errors
+<span class="c"># 5. open the dashboard (http://localhost:3000)</span>
+kubectl -n monitoring port-forward svc/grafana 3000:3000</div>
+  <p class="big" style="margin-top:24px">Then follow the 8 labs in the study guide. 🎓</p>
+</section>
+
+<!-- 11 · CTA -->
+<section class="slide" data-n="11">
+  <div class="kicker">Thanks for reading 🙌</div>
+  <h1 style="font-size:66px">Releases that <span class="ok">promote themselves</span> when healthy, and <span class="bad">undo themselves</span> when not.</h1>
+  <div class="col" style="margin-top:16px">
+    <div class="card"><p class="big">💻 <b>Code, docs &amp; study guide</b><br><span class="mono" style="font-size:26px;color:var(--sky)">github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery</span></p></div>
+    <div class="card"><p class="big">🌐 <b>My portfolio</b><br><span class="mono" style="font-size:26px;color:var(--sky)">sufyanahmadkamboh.github.io</span></p></div>
+  </div>
+  <p class="big" style="margin-top:34px">💬 How does your team decide a release is "good enough"?<br><span class="small">Tell me in the comments 👇</span></p>
+</section>
+
+<div class="footer"><span><b>Sufyan Ahmad</b> · DevOps Engineer</span><span id="pager"></span></div>
+
+<script>
+  const n = parseInt(new URLSearchParams(location.search).get("s") || "1", 10);
+  const slides = document.querySelectorAll(".slide");
+  slides.forEach(s => s.classList.toggle("on", +s.dataset.n === n));
+  document.getElementById("pager").innerHTML = n < slides.length ? `${n} / ${slides.length} &nbsp;<span class="swipe">swipe →</span>` : `${n} / ${slides.length}`;
+</script>
+</body>
+</html>
