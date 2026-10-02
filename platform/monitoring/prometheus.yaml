@@ -1,0 +1,161 @@
+# Prometheus for the lab: discovers annotated pods in the delivery namespace, records the SLIs and
+# evaluates the burn-rate alerts. The SLO rules ConfigMap (prometheus-slo-rules) is generated from
+# slo/rules/ by scripts/up.sh, so the rules tested by promtool are exactly the rules that run here.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus-pod-discovery
+rules:
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus-pod-discovery
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus-pod-discovery
+subjects:
+  - kind: ServiceAccount
+    name: prometheus
+    namespace: monitoring
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 5s        # short interval so 1-minute canary windows have enough samples
+      evaluation_interval: 15s
+    rule_files:
+      - /etc/prometheus/rules/*.yaml
+    scrape_configs:
+      - job_name: prometheus
+        static_configs:
+          - targets: [localhost:9090]
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: [delivery]
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: "true"
+          - source_labels: [__meta_kubernetes_pod_phase]
+            action: keep
+            regex: Running
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            regex: (.+)
+            target_label: __metrics_path__
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            target_label: app
+          # The revision label is what lets the analysis compare canary pods against stable pods.
+          - source_labels: [__meta_kubernetes_pod_label_rollouts_pod_template_hash]
+            target_label: rollouts_pod_template_hash
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_version]
+            target_label: version
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: monitoring
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      serviceAccountName: prometheus
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v3.15.0
+          args:
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --storage.tsdb.retention.time=2d
+            - --web.enable-lifecycle
+          ports:
+            - name: http
+              containerPort: 9090
+          readinessProbe:
+            httpGet: { path: /-/ready, port: http }
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /-/healthy, port: http }
+            periodSeconds: 15
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: "1", memory: 1Gi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - { name: config, mountPath: /etc/prometheus }
+            - { name: rules, mountPath: /etc/prometheus/rules }
+            - { name: data, mountPath: /prometheus }
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config
+        - name: rules
+          configMap:
+            name: prometheus-slo-rules
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - name: http
+      port: 9090
+      targetPort: http
