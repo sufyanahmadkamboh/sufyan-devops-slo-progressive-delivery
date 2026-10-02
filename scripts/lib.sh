@@ -78,6 +78,8 @@ dump_diagnostics() {
   log "diagnostics"
   kubectl -n "$NAMESPACE" get rollout,rs,pods,analysisrun -o wide || true
   local run; run="$(latest_analysis_run || true)"
-  [[ -n "$run" ]] && kubectl -n "$NAMESPACE" get analysisrun "$run" -o yaml | sed -n '/^status:/,$p' || true
+  if [[ -n "$run" ]]; then
+    kubectl -n "$NAMESPACE" get analysisrun "$run" -o yaml | sed -n '/^status:/,$p' || true
+  fi
   kubectl -n argo-rollouts logs deploy/argo-rollouts --tail=50 || true
 }
