@@ -28,7 +28,7 @@ If yes twice, it rolls back automatically. No human needed.
 👉 Swipe through the slides for the full picture: the problem, when to use it, architecture, how it works, results, and how to run it yourself in about 3 minutes.
 
 💻 Code + study guide: https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery
-🌐 Portfolio: https://sufyanahmadkamboh.github.io/
+🌐 Slides + all my projects: https://sufyanahmadkamboh.github.io/#story=slo-progressive-delivery&slide=1
 
 How does your team decide that a release is "good enough"? I'd love to hear in the comments 👇
 
