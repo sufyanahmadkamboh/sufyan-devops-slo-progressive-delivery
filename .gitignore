@@ -25,3 +25,6 @@ kubeconfig*
 .idea/
 .DS_Store
 Thumbs.db
+
+# Video build output (frames, audio, mp4) and the recording session
+video/out/

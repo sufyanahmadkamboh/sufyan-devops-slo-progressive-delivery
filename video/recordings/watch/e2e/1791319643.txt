@@ -1,0 +1,33 @@
+Name:            orders-api
+Namespace:       delivery
+Status:          ◌ Progressing
+Message:         more replicas need to be updated
+Strategy:        Canary
+  Step:          2/8
+  SetWeight:     40
+  ActualWeight:  25
+Images:          orders-api:1.1.0 (stable)
+                 orders-api:1.2.0 (canary)
+Replicas:
+  Desired:       5
+  Current:       5
+  Updated:       2
+  Ready:         4
+  Available:     4
+
+NAME                                    KIND         STATUS         AGE    INFO
+⟳ orders-api                            Rollout      ◌ Progressing  6m57s  
+├──# revision:3                                                            
+│  ├──⧉ orders-api-6bb66c87ff           ReplicaSet   ◌ Progressing  37s    canary
+│  │  ├──□ orders-api-6bb66c87ff-5x5rv  Pod          ✔ Running      37s    ready:1/1
+│  │  └──□ orders-api-6bb66c87ff-kjmqb  Pod          ✔ Running      0s     ready:0/1
+│  └──α orders-api-6bb66c87ff-3         AnalysisRun  ◌ Running      30s    ✔ 1,✖ 1
+├──# revision:2                                                            
+│  ├──⧉ orders-api-7f6866c7fc           ReplicaSet   ✔ Healthy      3m23s  stable
+│  │  ├──□ orders-api-7f6866c7fc-zqzpt  Pod          ✔ Running      3m23s  ready:1/1
+│  │  ├──□ orders-api-7f6866c7fc-nsj5v  Pod          ✔ Running      2m48s  ready:1/1
+│  │  ├──□ orders-api-7f6866c7fc-7mm4c  Pod          ✔ Running      2m12s  ready:1/1
+│  │  └──□ orders-api-7f6866c7fc-f8d8l  Pod          ◌ Terminating  96s    ready:1/1
+│  └──α orders-api-7f6866c7fc-2         AnalysisRun  ✔ Successful   3m18s  ✔ 18
+└──# revision:1                                                            
+   └──⧉ orders-api-5845cb7894           ReplicaSet   • ScaledDown   6m57s  

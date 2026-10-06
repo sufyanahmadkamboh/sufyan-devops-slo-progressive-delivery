@@ -1,0 +1,36 @@
+Name:            orders-api
+Namespace:       delivery
+Status:          ✖ Degraded
+Message:         RolloutAborted: Rollout aborted update to revision 5: Background analysis phase error/failed: Metric "canary-p95-latency" assessed Failed due to failed (2) > failureLimit (1)
+Strategy:        Canary
+  Step:          0/8
+  SetWeight:     0
+  ActualWeight:  0
+Images:          orders-api:1.1.0 (stable)
+Replicas:
+  Desired:       5
+  Current:       5
+  Updated:       0
+  Ready:         5
+  Available:     5
+
+NAME                                    KIND         STATUS         AGE    INFO
+⟳ orders-api                            Rollout      ✖ Degraded     8m24s  
+├──# revision:5                                                            
+│  ├──⧉ orders-api-6d8447975c           ReplicaSet   • ScaledDown   48s    canary
+│  │  └──□ orders-api-6d8447975c-qgwbh  Pod          ◌ Terminating  48s    ready:1/1
+│  └──α orders-api-6d8447975c-5         AnalysisRun  ✖ Failed       42s    ✔ 2,✖ 2
+├──# revision:4                                                            
+│  └──⧉ orders-api-7f6866c7fc           ReplicaSet   ✔ Healthy      4m50s  stable
+│     ├──□ orders-api-7f6866c7fc-zqzpt  Pod          ✔ Running      4m50s  ready:1/1
+│     ├──□ orders-api-7f6866c7fc-nsj5v  Pod          ✔ Running      4m15s  ready:1/1
+│     ├──□ orders-api-7f6866c7fc-7mm4c  Pod          ✔ Running      3m39s  ready:1/1
+│     ├──□ orders-api-7f6866c7fc-gdflp  Pod          ✔ Running      7s     ready:1/1
+│     └──□ orders-api-7f6866c7fc-hvmjm  Pod          ✔ Running      7s     ready:1/1
+├──# revision:3                                                            
+│  ├──⧉ orders-api-6bb66c87ff           ReplicaSet   • ScaledDown   2m4s   
+│  └──α orders-api-6bb66c87ff-3         AnalysisRun  ✖ Failed       117s   ✔ 2,✖ 2
+├──# revision:2                                                            
+│  └──α orders-api-7f6866c7fc-2         AnalysisRun  ✔ Successful   4m45s  ✔ 18
+└──# revision:1                                                            
+   └──⧉ orders-api-5845cb7894           ReplicaSet   • ScaledDown   8m24s  

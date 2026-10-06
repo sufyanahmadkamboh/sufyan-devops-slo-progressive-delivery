@@ -1,0 +1,5 @@
+$ MSYS_NO_PATHCONV=1 docker run --rm -v "$(cygpath -m "$PWD/slo"):/slo" --entrypoint promtool prom/prometheus:v3.15.0 check rules /slo/rules/orders-api-slo.rules.yaml
+Checking /slo/rules/orders-api-slo.rules.yaml
+  SUCCESS: 13 rules found
+
+# exit=0 seconds=1 at=22:38:16

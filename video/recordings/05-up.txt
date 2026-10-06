@@ -1,0 +1,49 @@
+$ scripts/up.sh
+[22:38:18] creating kind cluster slo-delivery
+Creating cluster "slo-delivery" ...
+ • Ensuring node image (kindest/node:v1.37.0) 🖼️  ...
+ ✓ Ensuring node image (kindest/node:v1.37.0) 🖼️
+ • Preparing nodes 📦 📦 📦   ...
+ ✓ Preparing nodes 📦 📦 📦 
+ • Writing configuration 📜  ...
+ ✓ Writing configuration 📜
+ • Starting control-plane 🕹️  ...
+ ✓ Starting control-plane 🕹️
+ • Installing CNI 🔌  ...
+ ✓ Installing CNI 🔌
+ • Installing StorageClass 💾  ...
+ ✓ Installing StorageClass 💾
+ • Joining worker nodes 🚜  ...
+ ✓ Joining worker nodes 🚜
+ • Waiting ≤ 2m0s for control-plane = Ready ⏳  ...
+ ✓ Waiting ≤ 2m0s for control-plane = Ready ⏳
+ • Ready after 9s 💚
+Set kubectl context to "kind-slo-delivery"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-slo-delivery
+
+Not sure what to do next? 😅  Check out https://kind.sigs.k8s.io/docs/user/quick-start/
+[22:38:55] installing Argo Rollouts v1.10.0
+Waiting for deployment "argo-rollouts" rollout to finish: 0 of 1 updated replicas are available...
+deployment "argo-rollouts" successfully rolled out
+[22:39:04] deploying Prometheus with the SLO rules from slo/rules/
+[22:39:05] deploying Grafana with the SLO dashboard
+Waiting for deployment "prometheus" rollout to finish: 0 of 1 updated replicas are available...
+deployment "prometheus" successfully rolled out
+Waiting for deployment "grafana" rollout to finish: 0 of 1 updated replicas are available...
+deployment "grafana" successfully rolled out
+[22:40:08] building orders-api:1.0.0
+[22:40:12] loading orders-api:1.0.0 into kind cluster slo-delivery
+Image: "orders-api:1.0.0" with ID "sha256:ad3644925f5095b56862f1d642bbd8619b6e1584057fc33dde5b65ac2c6eab5e" not yet present on node "slo-delivery-control-plane", loading...
+Image: "orders-api:1.0.0" with ID "sha256:ad3644925f5095b56862f1d642bbd8619b6e1584057fc33dde5b65ac2c6eab5e" not yet present on node "slo-delivery-worker2", loading...
+Image: "orders-api:1.0.0" with ID "sha256:ad3644925f5095b56862f1d642bbd8619b6e1584057fc33dde5b65ac2c6eab5e" not yet present on node "slo-delivery-worker", loading...
+[22:40:26] installing orders-api 1.0.0 (first revision goes straight to 100%)
+deployment "orders-loadgen" successfully rolled out
+[22:40:38] PASS lab is up. Next steps:
+  Release a new version:   scripts/release.sh 1.1.0
+  Release a bad version:   scripts/release.sh 1.2.0 --inject-errors
+  Watch the rollout:       kubectl -n delivery get rollout orders-api -w
+  Grafana:                 kubectl -n monitoring port-forward svc/grafana 3000:3000   -> http://localhost:3000
+  Prometheus:              kubectl -n monitoring port-forward svc/prometheus 9090:9090 -> http://localhost:9090
+# exit=0 seconds=141 at=22:40:38

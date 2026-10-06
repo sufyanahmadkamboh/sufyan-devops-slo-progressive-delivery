@@ -1,0 +1,6 @@
+$ kubectl get nodes
+NAME                         STATUS   ROLES           AGE    VERSION
+slo-delivery-control-plane   Ready    control-plane   2m6s   v1.37.0
+slo-delivery-worker          Ready    <none>          114s   v1.37.0
+slo-delivery-worker2         Ready    <none>          114s   v1.37.0
+# exit=0 seconds=0 at=22:40:38

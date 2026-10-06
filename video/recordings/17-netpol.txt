@@ -1,0 +1,4 @@
+$ scripts/check-network-policy.sh
+[22:50:45] PASS same-namespace client can reach orders-api
+[22:50:52] PASS pod in an unrelated namespace is blocked by the NetworkPolicy
+# exit=0 seconds=15 at=22:50:52

@@ -1,0 +1,33 @@
+Name:            orders-api
+Namespace:       delivery
+Status:          ॥ Paused
+Message:         CanaryPauseStep
+Strategy:        Canary
+  Step:          3/8
+  SetWeight:     40
+  ActualWeight:  40
+Images:          orders-api:1.1.0 (stable)
+                 orders-api:1.2.0 (canary)
+Replicas:
+  Desired:       5
+  Current:       5
+  Updated:       2
+  Ready:         5
+  Available:     5
+
+NAME                                    KIND         STATUS         AGE    INFO
+⟳ orders-api                            Rollout      ॥ Paused       7m1s   
+├──# revision:3                                                            
+│  ├──⧉ orders-api-6bb66c87ff           ReplicaSet   ✔ Healthy      41s    canary
+│  │  ├──□ orders-api-6bb66c87ff-5x5rv  Pod          ✔ Running      41s    ready:1/1
+│  │  └──□ orders-api-6bb66c87ff-kjmqb  Pod          ✔ Running      4s     ready:1/1
+│  └──α orders-api-6bb66c87ff-3         AnalysisRun  ◌ Running      34s    ✔ 1,✖ 1
+├──# revision:2                                                            
+│  ├──⧉ orders-api-7f6866c7fc           ReplicaSet   ✔ Healthy      3m27s  stable
+│  │  ├──□ orders-api-7f6866c7fc-zqzpt  Pod          ✔ Running      3m27s  ready:1/1
+│  │  ├──□ orders-api-7f6866c7fc-nsj5v  Pod          ✔ Running      2m52s  ready:1/1
+│  │  ├──□ orders-api-7f6866c7fc-7mm4c  Pod          ✔ Running      2m16s  ready:1/1
+│  │  └──□ orders-api-7f6866c7fc-f8d8l  Pod          ◌ Terminating  100s   ready:1/1
+│  └──α orders-api-7f6866c7fc-2         AnalysisRun  ✔ Successful   3m22s  ✔ 18
+└──# revision:1                                                            
+   └──⧉ orders-api-5845cb7894           ReplicaSet   • ScaledDown   7m1s   

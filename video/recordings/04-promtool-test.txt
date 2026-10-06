@@ -1,0 +1,4 @@
+$ MSYS_NO_PATHCONV=1 docker run --rm -v "$(cygpath -m "$PWD/slo"):/slo" -w /slo/tests --entrypoint promtool prom/prometheus:v3.15.0 test rules orders-api-slo.test.yaml
+  SUCCESS
+
+# exit=0 seconds=1 at=22:38:17

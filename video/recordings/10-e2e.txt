@@ -1,0 +1,34 @@
+$ scripts/e2e.sh
+[22:43:45] scenario 1: healthy release is promoted
+[22:43:45] building orders-api:1.1.0
+[22:43:47] loading orders-api:1.1.0 into kind cluster slo-delivery
+Image: "orders-api:1.1.0" with ID "sha256:388df6d902497ec89ee65e5b5b11024b2ecf9034a5dffdcfe43885cf7bb72254" not yet present on node "slo-delivery-control-plane", loading...
+Image: "orders-api:1.1.0" with ID "sha256:388df6d902497ec89ee65e5b5b11024b2ecf9034a5dffdcfe43885cf7bb72254" not yet present on node "slo-delivery-worker2", loading...
+Image: "orders-api:1.1.0" with ID "sha256:388df6d902497ec89ee65e5b5b11024b2ecf9034a5dffdcfe43885cf7bb72254" not yet present on node "slo-delivery-worker", loading...
+[22:43:59] releasing 1.1.0 (fault.errorRate=0 fault.latencyMs=0)
+[22:44:00] canary started. Watch it with: kubectl -n delivery get rollout orders-api -w
+[22:46:32] PASS 1.1.0 promoted to 100% after passing every SLO check (analysis run orders-api-7f6866c7fc-2)
+[22:46:32] scenario 2: release with an error regression is rolled back
+[22:46:32] building orders-api:1.2.0
+[22:46:34] loading orders-api:1.2.0 into kind cluster slo-delivery
+Image: "orders-api:1.2.0" with ID "sha256:f69b5f5a57ff4beac25b36ee3563425c28f7c08463a162506ce4bb6fed51f806" not yet present on node "slo-delivery-control-plane", loading...
+Image: "orders-api:1.2.0" with ID "sha256:f69b5f5a57ff4beac25b36ee3563425c28f7c08463a162506ce4bb6fed51f806" not yet present on node "slo-delivery-worker2", loading...
+Image: "orders-api:1.2.0" with ID "sha256:f69b5f5a57ff4beac25b36ee3563425c28f7c08463a162506ce4bb6fed51f806" not yet present on node "slo-delivery-worker", loading...
+[22:46:46] releasing 1.2.0 (fault.errorRate=0.25 fault.latencyMs=0)
+[22:46:46] canary started. Watch it with: kubectl -n delivery get rollout orders-api -w
+[22:47:28] PASS 1.2.0 aborted automatically; failed SLO check: canary-error-ratio (analysis run orders-api-6bb66c87ff-3)
+[22:47:46] PASS all traffic is back on 1.1.0
+[22:47:46] restoring desired state to the stable version 1.1.0
+[22:47:48] scenario 3: release with a latency regression is rolled back
+[22:47:48] building orders-api:1.3.0
+[22:47:50] loading orders-api:1.3.0 into kind cluster slo-delivery
+Image: "orders-api:1.3.0" with ID "sha256:45a02094f66337e5c3f7a4733b2c57165ac4c12fff70d09eea48cadcdbf1d8a6" not yet present on node "slo-delivery-control-plane", loading...
+Image: "orders-api:1.3.0" with ID "sha256:45a02094f66337e5c3f7a4733b2c57165ac4c12fff70d09eea48cadcdbf1d8a6" not yet present on node "slo-delivery-worker2", loading...
+Image: "orders-api:1.3.0" with ID "sha256:45a02094f66337e5c3f7a4733b2c57165ac4c12fff70d09eea48cadcdbf1d8a6" not yet present on node "slo-delivery-worker", loading...
+[22:48:01] releasing 1.3.0 (fault.errorRate=0 fault.latencyMs=600)
+[22:48:02] canary started. Watch it with: kubectl -n delivery get rollout orders-api -w
+[22:48:44] PASS 1.3.0 aborted automatically; failed SLO check: canary-p95-latency (analysis run orders-api-6d8447975c-5)
+[22:48:56] PASS all traffic is back on 1.1.0
+[22:48:56] restoring desired state to the stable version 1.1.0
+[22:48:57] PASS all end-to-end scenarios passed
+# exit=0 seconds=312 at=22:48:57

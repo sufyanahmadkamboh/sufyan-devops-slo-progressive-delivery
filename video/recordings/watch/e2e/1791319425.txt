@@ -1,0 +1,24 @@
+Name:            orders-api
+Namespace:       delivery
+Status:          ✔ Healthy
+Strategy:        Canary
+  Step:          8/8
+  SetWeight:     100
+  ActualWeight:  100
+Images:          orders-api:1.0.0 (stable)
+Replicas:
+  Desired:       5
+  Current:       5
+  Updated:       5
+  Ready:         5
+  Available:     5
+
+NAME                                    KIND        STATUS     AGE    INFO
+⟳ orders-api                            Rollout     ✔ Healthy  3m19s  
+└──# revision:1                                                       
+   └──⧉ orders-api-5845cb7894           ReplicaSet  ✔ Healthy  3m19s  stable
+      ├──□ orders-api-5845cb7894-5xtzr  Pod         ✔ Running  3m19s  ready:1/1
+      ├──□ orders-api-5845cb7894-6pwwq  Pod         ✔ Running  3m19s  ready:1/1
+      ├──□ orders-api-5845cb7894-9z8qh  Pod         ✔ Running  3m19s  ready:1/1
+      ├──□ orders-api-5845cb7894-l7vnf  Pod         ✔ Running  3m18s  ready:1/1
+      └──□ orders-api-5845cb7894-tngzg  Pod         ✔ Running  3m18s  ready:1/1

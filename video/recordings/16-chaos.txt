@@ -1,0 +1,16 @@
+$ scripts/chaos-prometheus-outage.sh
+[22:49:01] stable version is 1.1.0; releasing healthy candidate 1.4.0
+[22:49:01] building orders-api:1.4.0
+[22:49:03] loading orders-api:1.4.0 into kind cluster slo-delivery
+Image: "orders-api:1.4.0" with ID "sha256:23936bed3b43cfee7cf43b9566deced9eb2c2444bab3e5bedd1235317f8f5b9a" not yet present on node "slo-delivery-control-plane", loading...
+Image: "orders-api:1.4.0" with ID "sha256:23936bed3b43cfee7cf43b9566deced9eb2c2444bab3e5bedd1235317f8f5b9a" not yet present on node "slo-delivery-worker2", loading...
+Image: "orders-api:1.4.0" with ID "sha256:23936bed3b43cfee7cf43b9566deced9eb2c2444bab3e5bedd1235317f8f5b9a" not yet present on node "slo-delivery-worker", loading...
+[22:49:15] releasing 1.4.0 (fault.errorRate=0 fault.latencyMs=0)
+[22:49:15] canary started. Watch it with: kubectl -n delivery get rollout orders-api -w
+[22:49:26] taking Prometheus down while the canary is at 1 of the steps
+[22:50:24] PASS rollout aborted while metrics were unavailable (analysis run orders-api-8b84c499d-7 phase: Error)
+canary-error-ratio: phase=Error consecutiveError=5
+canary-p95-latency: phase=Error consecutiveError=5
+[22:50:24] restoring Prometheus and the stable version 1.1.0
+[22:50:37] PASS recovered: 1.1.0 healthy, Prometheus back
+# exit=0 seconds=97 at=22:50:37

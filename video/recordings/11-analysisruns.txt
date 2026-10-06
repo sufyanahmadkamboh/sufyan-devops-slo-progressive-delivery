@@ -1,0 +1,6 @@
+$ kubectl get analysisrun -n delivery
+NAME                      STATUS       AGE
+orders-api-6bb66c87ff-3   Failed       2m6s
+orders-api-6d8447975c-5   Failed       51s
+orders-api-7f6866c7fc-2   Successful   4m54s
+# exit=0 seconds=0 at=22:48:59

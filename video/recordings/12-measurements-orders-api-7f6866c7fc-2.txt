@@ -1,0 +1,5 @@
+$ kubectl get analysisrun orders-api-7f6866c7fc-2 -n delivery -o jsonpath='{.status.phase}{"\n"}{range .status.metricResults[*]}{.name}: {.phase} {range .measurements[*]}{.value} {end}{"\n"}{end}'
+Successful
+canary-error-ratio: Successful [0] [0] [0] [0] [0] [0] [0] [0] [0] 
+canary-p95-latency: Successful [0.02375] [0.02375] [0.02375] [0.02375] [0.02375] [0.02375] [0.02375] [0.023750000000000004] [0.02375] 
+# exit=0 seconds=0 at=22:48:59

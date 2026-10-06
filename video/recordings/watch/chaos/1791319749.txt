@@ -1,0 +1,34 @@
+Name:            orders-api
+Namespace:       delivery
+Status:          ✔ Healthy
+Strategy:        Canary
+  Step:          8/8
+  SetWeight:     100
+  ActualWeight:  100
+Images:          orders-api:1.1.0 (stable)
+Replicas:
+  Desired:       5
+  Current:       5
+  Updated:       5
+  Ready:         5
+  Available:     5
+
+NAME                                    KIND         STATUS        AGE    INFO
+⟳ orders-api                            Rollout      ✔ Healthy     8m44s  
+├──# revision:6                                                           
+│  └──⧉ orders-api-7f6866c7fc           ReplicaSet   ✔ Healthy     5m10s  stable
+│     ├──□ orders-api-7f6866c7fc-zqzpt  Pod          ✔ Running     5m10s  ready:1/1
+│     ├──□ orders-api-7f6866c7fc-nsj5v  Pod          ✔ Running     4m35s  ready:1/1
+│     ├──□ orders-api-7f6866c7fc-7mm4c  Pod          ✔ Running     3m59s  ready:1/1
+│     ├──□ orders-api-7f6866c7fc-gdflp  Pod          ✔ Running     27s    ready:1/1
+│     └──□ orders-api-7f6866c7fc-hvmjm  Pod          ✔ Running     27s    ready:1/1
+├──# revision:5                                                           
+│  ├──⧉ orders-api-6d8447975c           ReplicaSet   • ScaledDown  68s    
+│  └──α orders-api-6d8447975c-5         AnalysisRun  ✖ Failed      62s    ✔ 2,✖ 2
+├──# revision:3                                                           
+│  ├──⧉ orders-api-6bb66c87ff           ReplicaSet   • ScaledDown  2m24s  
+│  └──α orders-api-6bb66c87ff-3         AnalysisRun  ✖ Failed      2m17s  ✔ 2,✖ 2
+├──# revision:2                                                           
+│  └──α orders-api-7f6866c7fc-2         AnalysisRun  ✔ Successful  5m5s   ✔ 18
+└──# revision:1                                                           
+   └──⧉ orders-api-5845cb7894           ReplicaSet   • ScaledDown  8m44s  

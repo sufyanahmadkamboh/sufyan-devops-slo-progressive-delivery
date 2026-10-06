@@ -1,0 +1,7 @@
+$ kubectl get pods -n argo-rollouts; kubectl get pods -n monitoring
+NAME                             READY   STATUS    RESTARTS   AGE
+argo-rollouts-77c5cbb555-fggbv   1/1     Running   0          101s
+NAME                         READY   STATUS    RESTARTS   AGE
+grafana-7f8869c797-5l8jg     1/1     Running   0          93s
+prometheus-7984bf965-fsxfg   1/1     Running   0          93s
+# exit=0 seconds=0 at=22:40:38

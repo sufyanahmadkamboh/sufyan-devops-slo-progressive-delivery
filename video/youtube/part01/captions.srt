@@ -1,0 +1,1039 @@
+1
+00:00:04,800 --> 00:00:11,222
+Last week a release broke the checkout for everyone, and the pipeline was green the whole time.
+
+2
+00:00:11,222 --> 00:00:12,980
+How does that even happen?
+
+3
+00:00:13,533 --> 00:00:16,609
+Because the pipeline only asked one question:
+
+4
+00:00:16,609 --> 00:00:18,455
+did the deployment succeed?
+
+5
+00:00:18,455 --> 00:00:23,855
+With a normal rolling update, the new version replaces the old pods one by one,
+
+6
+00:00:23,855 --> 00:00:27,068
+and within minutes it serves every single user.
+
+7
+00:00:27,633 --> 00:00:30,230
+And then you find out the hard way:
+
+8
+00:00:30,230 --> 00:00:32,753
+from an alert, or from a customer.
+
+9
+00:00:33,300 --> 00:00:39,223
+Then a person has to decide, under pressure, whether it is bad enough to roll back.
+
+10
+00:00:39,223 --> 00:00:42,434
+Usually while the error count keeps climbing.
+
+11
+00:00:43,000 --> 00:00:46,054
+So what does this project do differently?
+
+12
+00:00:46,600 --> 00:00:49,126
+Every release goes out as a canary.
+
+13
+00:00:49,126 --> 00:00:53,599
+The new version first gets only twenty percent of the traffic.
+
+14
+00:00:54,133 --> 00:00:59,868
+While the traffic grows, the new version is measured against agreed targets,
+
+15
+00:00:59,868 --> 00:01:03,263
+called SLOs, every fifteen to thirty seconds.
+
+16
+00:01:03,800 --> 00:01:09,545
+If it stays healthy, it is promoted to a hundred percent with nobody in the loop.
+
+17
+00:01:09,545 --> 00:01:14,722
+If it fails too often, or gets too slow, it is rolled back automatically,
+
+18
+00:01:14,722 --> 00:01:17,559
+and the old version keeps serving users.
+
+19
+00:01:19,300 --> 00:01:21,974
+Can you explain it without the jargon?
+
+20
+00:01:22,533 --> 00:01:25,459
+Think of a restaurant with a new recipe.
+
+21
+00:01:25,459 --> 00:01:28,239
+You do not serve it to the whole room.
+
+22
+00:01:28,239 --> 00:01:31,823
+You serve it to one table in five, and you watch.
+
+23
+00:01:32,367 --> 00:01:37,056
+If those tables are happy, you serve it to two tables in five,
+
+24
+00:01:37,600 --> 00:01:39,064
+then three,
+
+25
+00:01:39,600 --> 00:01:41,049
+then four,
+
+26
+00:01:41,600 --> 00:01:43,869
+and finally to everyone.
+
+27
+00:01:44,433 --> 00:01:50,814
+If the tables complain, you stop at once, and everybody gets the old recipe again.
+
+28
+00:01:50,814 --> 00:01:54,083
+Only a few tables ever tasted the bad one.
+
+29
+00:01:54,633 --> 00:01:56,012
+The important part:
+
+30
+00:01:56,012 --> 00:02:00,948
+how many complaints are too many is agreed before the dinner starts.
+
+31
+00:02:00,948 --> 00:02:04,504
+Nobody argues about it in the middle of the rush.
+
+32
+00:02:04,504 --> 00:02:07,698
+In our world, that agreed number is the SLO.
+
+33
+00:02:09,433 --> 00:02:13,560
+I hear SLO, SLI and error budget all the time.
+
+34
+00:02:13,560 --> 00:02:15,983
+What do they actually mean?
+
+35
+00:02:16,533 --> 00:02:21,539
+An SLI, a service level indicator, is simply something we measure.
+
+36
+00:02:21,539 --> 00:02:22,980
+Here there are two:
+
+37
+00:02:22,980 --> 00:02:29,048
+the share of requests that fail with a server error, and how long requests take.
+
+38
+00:02:29,048 --> 00:02:30,868
+For time we use the p95:
+
+39
+00:02:30,868 --> 00:02:35,343
+ninety-five percent of requests are faster than this value.
+
+40
+00:02:35,900 --> 00:02:42,972
+The SLO, the service level objective, is the target for that measurement.
+
+41
+00:02:42,972 --> 00:02:44,909
+For this orders API:
+
+42
+00:02:44,909 --> 00:02:51,399
+99.5% of requests must succeed, and the p95 must stay under 300 ms.
+
+43
+00:02:51,933 --> 00:02:55,292
+The error budget is what is left over.
+
+44
+00:02:55,292 --> 00:02:59,005
+If 99.5% must succeed, then 0.5% may fail.
+
+45
+00:02:59,005 --> 00:03:02,011
+That is not a failure of the team:
+
+46
+00:03:02,011 --> 00:03:09,348
+it is a budget the team is allowed to spend, on releases, experiments and bad luck.
+
+47
+00:03:09,900 --> 00:03:13,534
+And the burn rate says how fast you are spending it.
+
+48
+00:03:13,534 --> 00:03:17,868
+A burn rate of one spends the budget exactly over thirty days.
+
+49
+00:03:17,868 --> 00:03:23,739
+A burn rate of 14.4 spends two percent of the whole month's budget in a single hour.
+
+50
+00:03:23,739 --> 00:03:26,464
+That is fast enough to wake someone up.
+
+51
+00:03:28,200 --> 00:03:32,595
+So how does the canary check turn the SLO into a yes or no?
+
+52
+00:03:33,133 --> 00:03:36,111
+With one multiplication.
+
+53
+00:03:36,111 --> 00:03:39,337
+The error budget is 0.005.
+
+54
+00:03:39,337 --> 00:03:44,300
+The fastest burn rate we accept is 14.4.
+
+55
+00:03:44,300 --> 00:03:47,526
+0.005 times 14.4 is 0.072.
+
+56
+00:03:47,526 --> 00:03:53,978
+So the canary may fail at most 7.2% of its requests.
+
+57
+00:03:54,533 --> 00:03:57,728
+Below that, the release carries on.
+
+58
+00:03:58,267 --> 00:04:04,861
+Above it, the canary is burning budget as fast as an incident would, and the release is stopped.
+
+59
+00:04:05,400 --> 00:04:07,667
+And notice where 14.4 comes from:
+
+60
+00:04:07,667 --> 00:04:12,476
+it is the same threshold as the alert that pages the on-call engineer.
+
+61
+00:04:12,476 --> 00:04:16,048
+A release that would page someone is never promoted.
+
+62
+00:04:16,048 --> 00:04:20,444
+The deployment and the alerting share one definition of healthy.
+
+63
+00:04:22,200 --> 00:04:24,333
+What is actually running?
+
+64
+00:04:24,333 --> 00:04:26,039
+Draw me the picture.
+
+65
+00:04:26,600 --> 00:04:28,803
+It starts in GitHub Actions.
+
+66
+00:04:28,803 --> 00:04:34,389
+After the tests, a release is just a Helm upgrade with a new image tag.
+
+67
+00:04:34,933 --> 00:04:37,015
+Argo Rollouts receives it.
+
+68
+00:04:37,015 --> 00:04:45,184
+It replaces the normal Kubernetes Deployment with a Rollout, which knows how to move traffic in steps:
+
+69
+00:04:45,184 --> 00:04:49,028
+twenty, forty, sixty, eighty, a hundred percent.
+
+70
+00:04:49,567 --> 00:04:52,723
+During a release there are two kinds of pods:
+
+71
+00:04:52,723 --> 00:04:57,984
+the stable pods with the old version, and the canary pods with the new one.
+
+72
+00:04:57,984 --> 00:05:01,771
+Every pod exposes metrics, labelled with its revision.
+
+73
+00:05:02,333 --> 00:05:08,731
+In a lab there are no real users, so a small load generator sends twenty requests per second.
+
+74
+00:05:08,731 --> 00:05:11,758
+Without traffic there is nothing to measure.
+
+75
+00:05:12,300 --> 00:05:19,054
+Prometheus scrapes every pod, computes the SLIs, and evaluates the burn-rate alerts.
+
+76
+00:05:19,600 --> 00:05:26,129
+Every fifteen to thirty seconds, Argo Rollouts asks Prometheus about the canary pods only.
+
+77
+00:05:26,667 --> 00:05:30,469
+Grafana shows all of it on one dashboard:
+
+78
+00:05:30,469 --> 00:05:35,476
+the SLOs, the error budget, and canary against stable.
+
+79
+00:05:36,033 --> 00:05:38,575
+And the answer decides the release:
+
+80
+00:05:38,575 --> 00:05:44,603
+pass means promote, fail means abort, and all traffic goes back to the stable pods.
+
+81
+00:05:46,367 --> 00:05:49,106
+Where are all these numbers written down?
+
+82
+00:05:49,667 --> 00:05:50,695
+In one place:
+
+83
+00:05:50,695 --> 00:05:52,355
+the Helm values file.
+
+84
+00:05:52,355 --> 00:05:58,286
+The SLO targets, the burn rate, how often to measure, and the canary steps.
+
+85
+00:05:58,286 --> 00:06:05,561
+Changing the policy is a reviewed pull request, not a decision in the middle of an incident.
+
+86
+00:06:06,100 --> 00:06:08,371
+Two settings deserve attention.
+
+87
+00:06:08,371 --> 00:06:16,430
+failureLimit 1 means one bad measurement is forgiven, because one noisy sample should not kill a good release.
+
+88
+00:06:16,430 --> 00:06:18,334
+The second bad one aborts.
+
+89
+00:06:18,900 --> 00:06:20,805
+And consecutiveErrorLimit 4:
+
+90
+00:06:20,805 --> 00:06:27,471
+if Prometheus cannot answer five times in a row, the analysis gives up and the release is aborted.
+
+91
+00:06:27,471 --> 00:06:31,144
+We will break Prometheus on purpose later to prove it.
+
+92
+00:06:31,700 --> 00:06:38,609
+With five replicas, each step of twenty percent moves exactly one pod from the old version to the new.
+
+93
+00:06:40,367 --> 00:06:43,561
+And what exactly does it ask Prometheus?
+
+94
+00:06:44,100 --> 00:06:46,256
+This is the AnalysisTemplate.
+
+95
+00:06:46,256 --> 00:06:49,526
+The first check is the canary's error ratio:
+
+96
+00:06:49,526 --> 00:06:54,134
+failed requests divided by all requests, over the last minute.
+
+97
+00:06:54,700 --> 00:06:57,242
+The important detail is the selector.
+
+98
+00:06:57,242 --> 00:07:04,251
+Every pod carries a label with the hash of its revision, and Argo Rollouts fills in the canary's hash.
+
+99
+00:07:04,251 --> 00:07:08,304
+So the stable pods cannot hide a bad canary in the average.
+
+100
+00:07:08,867 --> 00:07:12,549
+The success condition has a second safety detail:
+
+101
+00:07:12,549 --> 00:07:14,202
+the result must exist.
+
+102
+00:07:14,202 --> 00:07:20,515
+If no traffic reached the canary, there is no data, and no data counts as a failure.
+
+103
+00:07:20,515 --> 00:07:23,671
+A version nobody tested is never promoted.
+
+104
+00:07:24,233 --> 00:07:32,778
+The second check, below it, works the same way for the p95 latency, with the 300 ms limit.
+
+105
+00:07:34,533 --> 00:07:36,444
+The canary is protected.
+
+106
+00:07:36,444 --> 00:07:40,903
+What about problems that show up later, after a release?
+
+107
+00:07:41,467 --> 00:07:44,414
+That is the job of the burn-rate alerts.
+
+108
+00:07:44,414 --> 00:07:47,067
+They follow the Google SRE Workbook.
+
+109
+00:07:47,067 --> 00:07:52,373
+The fast-burn alert pages when the budget burns fourteen times too fast,
+
+110
+00:07:52,373 --> 00:07:56,131
+over one hour, and also over the last five minutes.
+
+111
+00:07:56,667 --> 00:07:57,840
+Why two windows?
+
+112
+00:07:57,840 --> 00:08:01,726
+The long window proves it is significant, not a blip.
+
+113
+00:08:01,726 --> 00:08:08,911
+The short window proves it is still happening now, so the alert stops soon after the problem does.
+
+114
+00:08:09,467 --> 00:08:17,641
+A slower burn over six hours also pages, and a slow leak over a whole day opens a ticket instead of waking anyone up.
+
+115
+00:08:18,200 --> 00:08:20,830
+There is a matching alert for latency.
+
+116
+00:08:20,830 --> 00:08:27,475
+And all four rules are unit-tested with promtool, so we know they fire exactly when they should.
+
+117
+00:08:29,233 --> 00:08:33,453
+Can I see it working for real, not just on slides?
+
+118
+00:08:34,000 --> 00:08:39,538
+Everything you will see now is a real run, recorded on my laptop.
+
+119
+00:08:39,538 --> 00:08:43,627
+One script, scripts/up.sh, builds the whole lab:
+
+120
+00:08:43,627 --> 00:08:48,057
+a local Kubernetes cluster with kind, Argo Rollouts,
+
+121
+00:08:48,057 --> 00:08:52,998
+Prometheus with the SLO rules, Grafana with the dashboard,
+
+122
+00:08:52,998 --> 00:08:58,110
+and version 1.0.0 of the orders API with its load generator.
+
+123
+00:08:58,667 --> 00:09:00,904
+It took 2 min 21 s.
+
+124
+00:09:00,904 --> 00:09:04,791
+No cloud account, nothing to pay.
+
+125
+00:09:05,333 --> 00:09:09,110
+The cluster has one control plane and two worker nodes,
+
+126
+00:09:09,110 --> 00:09:14,398
+so the stable and canary pods spread across machines, like in a real cluster.
+
+127
+00:09:16,133 --> 00:09:18,058
+What am I looking at?
+
+128
+00:09:18,600 --> 00:09:22,210
+This is the Argo Rollouts view of the service.
+
+129
+00:09:22,210 --> 00:09:26,604
+Status healthy, step eight of eight, weight one hundred:
+
+130
+00:09:26,604 --> 00:09:31,470
+version 1.0.0 is the stable version, and it serves everything.
+
+131
+00:09:32,033 --> 00:09:33,747
+Below it, the tree:
+
+132
+00:09:33,747 --> 00:09:37,804
+one ReplicaSet, revision one, with five pods.
+
+133
+00:09:37,804 --> 00:09:39,608
+Remember this shape.
+
+134
+00:09:39,608 --> 00:09:44,748
+During a release, a second ReplicaSet appears next to it.
+
+135
+00:09:46,500 --> 00:09:48,189
+And the dashboard?
+
+136
+00:09:48,733 --> 00:09:49,602
+At the top:
+
+137
+00:09:49,602 --> 00:09:54,498
+availability one hundred percent, the whole error budget left,
+
+138
+00:09:54,498 --> 00:09:59,473
+burn rate zero, latency inside the target, and no alert firing.
+
+139
+00:10:00,033 --> 00:10:00,475
+Below:
+
+140
+00:10:00,475 --> 00:10:07,759
+the burn rate over several windows, and then the error ratio and the p95 latency split by revision.
+
+141
+00:10:07,759 --> 00:10:13,793
+That split is what lets us compare a canary with the stable version, side by side.
+
+142
+00:10:15,533 --> 00:10:18,096
+Now release a new version.
+
+143
+00:10:18,096 --> 00:10:19,378
+What happens?
+
+144
+00:10:19,933 --> 00:10:25,636
+The test script, e2e.sh, releases version 1.1.0, a healthy version.
+
+145
+00:10:25,636 --> 00:10:31,764
+It uses shorter pauses than production, thirty seconds instead of sixty,
+
+146
+00:10:31,764 --> 00:10:35,253
+so the whole proof fits in a few minutes.
+
+147
+00:10:35,253 --> 00:10:38,658
+The decision rules are exactly the same.
+
+148
+00:10:39,200 --> 00:10:40,883
+Look at the tree now.
+
+149
+00:10:40,883 --> 00:10:48,016
+Revision two appeared, with one canary pod, next to the four stable pods of revision one.
+
+150
+00:10:48,016 --> 00:10:49,138
+Weight twenty:
+
+151
+00:10:49,138 --> 00:10:50,420
+one pod in five.
+
+152
+00:10:50,420 --> 00:10:55,789
+And there is an AnalysisRun, the background check, already running.
+
+153
+00:10:57,533 --> 00:11:00,516
+Argo Rollouts also has a dashboard.
+
+154
+00:11:00,516 --> 00:11:03,670
+Here the release is at sixty percent:
+
+155
+00:11:03,670 --> 00:11:08,783
+the steps on the left, three canary pods with version 1.1.0,
+
+156
+00:11:08,783 --> 00:11:14,238
+two stable pods with 1.0.0, and the analysis run doing its work.
+
+157
+00:11:14,800 --> 00:11:17,399
+So nobody pressed a button here?
+
+158
+00:11:17,933 --> 00:11:18,523
+Nobody.
+
+159
+00:11:18,523 --> 00:11:25,513
+Every step waits, the analysis keeps measuring, and the rollout moves on by itself.
+
+160
+00:11:27,267 --> 00:11:34,456
+After 2 min 33 s, version 1.1.0 was promoted to a hundred percent.
+
+161
+00:11:35,000 --> 00:11:38,155
+These are the real measurements.
+
+162
+00:11:38,155 --> 00:11:42,098
+9 error-ratio checks, the highest 0.000.
+
+163
+00:11:42,098 --> 00:11:51,069
+9 latency checks, with a p95 of about 24 milliseconds, far under the 300 millisecond limit.
+
+164
+00:11:51,633 --> 00:11:55,206
+A boring release, exactly as it should be.
+
+165
+00:11:55,206 --> 00:11:57,503
+And nobody had to watch it.
+
+166
+00:11:59,267 --> 00:12:01,146
+And a bad release?
+
+167
+00:12:01,700 --> 00:12:04,220
+Version 1.2.0 is broken on purpose.
+
+168
+00:12:04,220 --> 00:12:08,972
+The fault injection makes it fail twenty-five percent of requests:
+
+169
+00:12:08,972 --> 00:12:15,019
+the kind of bug that slips through tests because it only shows up with real traffic.
+
+170
+00:12:15,567 --> 00:12:19,162
+And here is the rollout a few seconds later.
+
+171
+00:12:19,162 --> 00:12:19,734
+Status:
+
+172
+00:12:19,734 --> 00:12:20,470
+degraded.
+
+173
+00:12:20,470 --> 00:12:21,777
+Rollout aborted.
+
+174
+00:12:21,777 --> 00:12:23,902
+The message even says why:
+
+175
+00:12:23,902 --> 00:12:30,440
+the metric canary-error-ratio failed two times, and only one failure is allowed.
+
+176
+00:12:30,440 --> 00:12:32,646
+The weight is back to zero.
+
+177
+00:12:34,400 --> 00:12:39,660
+On Grafana you can see the spike, and you can see whose spike it is:
+
+178
+00:12:39,660 --> 00:12:43,064
+the error ratio of the canary revision only.
+
+179
+00:12:43,064 --> 00:12:45,695
+The stable revision stays at zero.
+
+180
+00:12:46,233 --> 00:12:50,399
+That is why the analysis looks at the canary's own pods.
+
+181
+00:12:50,399 --> 00:12:54,714
+Mixed into the average, one pod's errors would look small.
+
+182
+00:12:54,714 --> 00:12:57,988
+Measured alone, they are impossible to miss.
+
+183
+00:12:59,733 --> 00:13:04,040
+The two measurements were 0.305 and 0.244:
+
+184
+00:13:04,040 --> 00:13:08,346
+about the twenty-five percent we injected.
+
+185
+00:13:08,346 --> 00:13:10,294
+The limit is 0.072.
+
+186
+00:13:10,294 --> 00:13:14,498
+Two failures, so the rollout was aborted.
+
+187
+00:13:15,033 --> 00:13:16,729
+From release to abort:
+
+188
+00:13:16,729 --> 00:13:17,577
+42 seconds.
+
+189
+00:13:17,577 --> 00:13:25,903
+Then the test sent forty requests through the Service and checked that every answer came from version 1.1.0.
+
+190
+00:13:25,903 --> 00:13:28,678
+Users were back on the good version.
+
+191
+00:13:29,233 --> 00:13:34,613
+So only one pod in five ever served the bad version, and for less than a minute.
+
+192
+00:13:35,167 --> 00:13:35,858
+Exactly.
+
+193
+00:13:35,858 --> 00:13:40,701
+With a rolling update, it would have reached every user.
+
+194
+00:13:42,467 --> 00:13:46,601
+What if the new version does not fail, but is just slow?
+
+195
+00:13:47,167 --> 00:13:49,042
+That is release three.
+
+196
+00:13:49,042 --> 00:13:55,520
+Version 1.3.0 answers correctly, but adds 600 milliseconds to every request.
+
+197
+00:13:55,520 --> 00:14:01,231
+No errors at all, so an error check alone would happily promote it.
+
+198
+00:14:01,767 --> 00:14:03,918
+The latency check caught it:
+
+199
+00:14:03,918 --> 00:14:10,831
+canary-p95-latency failed twice, and the rollout was aborted 43 seconds after the release.
+
+200
+00:14:11,367 --> 00:14:14,447
+The measured p95 was 0.975 seconds.
+
+201
+00:14:14,447 --> 00:14:16,207
+Why not exactly 0.6?
+
+202
+00:14:16,207 --> 00:14:22,368
+Because the histogram's buckets jump from half a second to one second,
+
+203
+00:14:22,368 --> 00:14:26,152
+and Prometheus estimates inside the bucket.
+
+204
+00:14:26,152 --> 00:14:30,465
+The estimate is rough, but the breach is obvious:
+
+205
+00:14:30,465 --> 00:14:32,841
+far above 300 milliseconds.
+
+206
+00:14:33,400 --> 00:14:34,811
+And the last line:
+
+207
+00:14:34,811 --> 00:14:37,319
+all end-to-end scenarios passed.
+
+208
+00:14:37,319 --> 00:14:42,804
+One good release promoted, two bad releases rolled back by themselves.
+
+209
+00:14:44,567 --> 00:14:46,242
+Here it is on Grafana:
+
+210
+00:14:46,242 --> 00:14:50,431
+the p95 of the canary revision jumps to about a second,
+
+211
+00:14:50,431 --> 00:14:55,076
+while the stable revision stays at about twenty milliseconds.
+
+212
+00:14:56,833 --> 00:15:01,142
+What if Prometheus itself goes down in the middle of a release?
+
+213
+00:15:01,142 --> 00:15:03,673
+Does the release just continue blind?
+
+214
+00:15:04,233 --> 00:15:07,164
+That is exactly what this test checks.
+
+215
+00:15:07,164 --> 00:15:11,328
+It releases version 1.4.0, which is perfectly healthy,
+
+216
+00:15:11,328 --> 00:15:16,418
+and while the canary is running it scales Prometheus down to zero.
+
+217
+00:15:16,967 --> 00:15:20,211
+The analysis can no longer measure anything.
+
+218
+00:15:20,211 --> 00:15:26,626
+After five errors in a row, the analysis run ends in Error, and the rollout is aborted.
+
+219
+00:15:27,167 --> 00:15:30,157
+Even though 1.4.0 was actually fine!
+
+220
+00:15:30,157 --> 00:15:31,735
+That is on purpose:
+
+221
+00:15:31,735 --> 00:15:35,888
+a release that cannot be verified is not promoted.
+
+222
+00:15:35,888 --> 00:15:37,466
+Failing safe means:
+
+223
+00:15:37,466 --> 00:15:41,286
+when in doubt, keep the version we know works.
+
+224
+00:15:41,833 --> 00:15:46,293
+Then the script brings Prometheus back and restores the stable version.
+
+225
+00:15:48,033 --> 00:15:50,533
+Is the service itself secure?
+
+226
+00:15:51,067 --> 00:15:56,682
+A NetworkPolicy lets traffic in only from the same namespace and from monitoring.
+
+227
+00:15:56,682 --> 00:15:58,623
+The security test proves it:
+
+228
+00:15:58,623 --> 00:16:04,376
+a pod in the same namespace reaches the API, a pod in another namespace is blocked.
+
+229
+00:16:04,933 --> 00:16:09,928
+The containers run as a non-root user, with a read-only file system,
+
+230
+00:16:09,928 --> 00:16:13,968
+no Linux capabilities, and the default seccomp profile.
+
+231
+00:16:14,533 --> 00:16:19,641
+The pods get no Kubernetes API token, because they do not need one.
+
+232
+00:16:19,641 --> 00:16:24,901
+And the Grafana admin password is generated when the lab is deployed,
+
+233
+00:16:24,901 --> 00:16:28,103
+so nothing secret lives in the repository.
+
+234
+00:16:28,667 --> 00:16:36,081
+In CI, the image is scanned with Trivy, and the build fails on any fixable high or critical vulnerability.
+
+235
+00:16:37,833 --> 00:16:42,063
+How do you know the safety net itself still works next month?
+
+236
+00:16:42,600 --> 00:16:45,739
+Because it is tested on every change.
+
+237
+00:16:45,739 --> 00:16:48,029
+The service has unit tests.
+
+238
+00:16:48,567 --> 00:16:51,736
+The SLO rules are checked with promtool,
+
+239
+00:16:52,300 --> 00:16:54,277
+and the alerts are unit-tested:
+
+240
+00:16:54,277 --> 00:17:00,143
+promtool feeds them made-up metrics and checks that each alert fires exactly when it should,
+
+241
+00:17:00,143 --> 00:17:02,119
+and stays quiet when it should.
+
+242
+00:17:02,667 --> 00:17:05,283
+GitHub Actions runs three stages:
+
+243
+00:17:05,283 --> 00:17:08,851
+static checks, then the image build and scan,
+
+244
+00:17:09,400 --> 00:17:13,352
+and then the full end-to-end run on a fresh kind cluster:
+
+245
+00:17:13,352 --> 00:17:19,592
+the good release, the two bad releases, the monitoring outage and the NetworkPolicy check.
+
+246
+00:17:19,592 --> 00:17:22,919
+If the safety net breaks, the pipeline goes red.
+
+247
+00:17:24,667 --> 00:17:26,636
+Let me try to sum it up.
+
+248
+00:17:26,636 --> 00:17:29,181
+First, measure what users feel:
+
+249
+00:17:29,181 --> 00:17:33,366
+errors and latency, separately for the new version.
+
+250
+00:17:33,900 --> 00:17:39,154
+Second, agree on the limits before the release, not during the incident.
+
+251
+00:17:39,700 --> 00:17:44,109
+Third, give the new version only a part of the traffic first.
+
+252
+00:17:44,667 --> 00:17:48,085
+Fourth, let the numbers decide.
+
+253
+00:17:48,085 --> 00:17:49,629
+Pass, promote.
+
+254
+00:17:49,629 --> 00:17:51,393
+Fail, roll back.
+
+255
+00:17:51,393 --> 00:17:54,591
+And no data counts as a fail.
+
+256
+00:17:55,133 --> 00:17:55,870
+And fifth:
+
+257
+00:17:55,870 --> 00:18:00,876
+test the safety net itself, with real bad releases, on every change.
+
+258
+00:18:00,876 --> 00:18:02,790
+That is the whole project.
+
+259
+00:18:02,790 --> 00:18:06,692
+The repository has a beginner study guide with a PDF,
+
+260
+00:18:06,692 --> 00:18:14,643
+if you want to learn every tool from zero, and you can run all of this on your own laptop with two commands.
