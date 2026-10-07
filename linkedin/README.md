@@ -14,7 +14,7 @@
 
 | # | Visual | Message |
 |---|---|---|
-| 1 | Side-by-side: bug hits 5/5 users vs 1/5 behind a shield | What the project does |
+| 1 | Red vs green split: a normal release hits every user; this project's real rollout output (RolloutAborted, back to stable) + 20% / 25% / 47 s | What the project does |
 | 2 | 4-panel comic strip (deploy → bug → 3 AM alarm → manual undo) | The pain point |
 | 3 | Traffic-split diagram: users → 1 NEW + 4 old servers, magnifier on NEW | The idea |
 | 4 | Icon grid + "skip it when" panel | When to use it |
