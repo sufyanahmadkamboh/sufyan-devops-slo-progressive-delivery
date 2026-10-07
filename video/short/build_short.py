@@ -79,7 +79,17 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);font-f
 body::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 700px at 50% 35%,rgba(56,140,255,.20),transparent 70%),
  linear-gradient(rgba(124,196,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(124,196,255,.05) 1px,transparent 1px);background-size:auto,60px 60px,60px 60px}
 #bar{position:absolute;left:0;top:0;height:12px;background:linear-gradient(90deg,var(--ok),var(--sky));width:0}
-.scene{position:absolute;left:0;right:0;top:150px;height:1050px;display:none;flex-direction:column;align-items:center;justify-content:center;gap:34px;text-align:center}
+#head{position:absolute;left:40px;right:40px;top:44px;height:120px;display:flex;align-items:center;gap:22px;
+ background:rgba(18,32,56,.92);border:4px solid #2f5585;border-radius:30px;padding:0 26px}
+#head img{height:76px}
+#head .pill{font-size:44px;font-weight:900;color:#0b1424;background:linear-gradient(90deg,var(--amber),#ff8a3d);border-radius:18px;padding:8px 20px;letter-spacing:1px}
+#head .topic{font-size:38px;white-space:nowrap;font-weight:900;line-height:1.05}#head .topic small{display:block;font-size:30px;color:var(--muted);font-weight:800}
+.tool{display:flex;align-items:center;gap:22px;font-size:60px;font-weight:900;background:#122038;border:5px solid #2f5585;border-radius:28px;padding:14px 34px}
+.inl{height:64px;vertical-align:middle;margin-right:10px}
+.down{display:flex;align-items:center;gap:30px}.down img{height:230px;filter:grayscale(1) brightness(.7)}.down span{font-size:170px}
+.logos{display:flex;gap:44px}.logos img{height:120px}
+.title.sm{font-size:84px}
+.scene{position:absolute;left:0;right:0;top:190px;height:1030px;display:none;flex-direction:column;align-items:center;justify-content:center;gap:34px;text-align:center}
 .scene.on{display:flex}
 [data-at]{opacity:0;transform:scale(.6)}
 .stamp{font-size:90px;font-weight:900;letter-spacing:2px;padding:18px 40px;border:10px solid;border-radius:26px;transform:rotate(-6deg)}
@@ -152,7 +162,10 @@ def page(tl: list[dict], caps: list[dict], total: float) -> Path:
     scenes = "".join(f'<section class="scene">{ln["body"]}</section>' for ln in LINES)
     html = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><title>short</title>'
             '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&display=swap" rel="stylesheet">'
-            f'<style>{CSS}</style></head><body><div id="bar"></div>{scenes}<div id="cap"></div>'
+            f'<style>{CSS}</style></head><body><div id="bar"></div>'
+            '<div id="head"><img src="logos/kubernetes-icon-color.svg"><span class="pill">DevSecOps</span>'
+            '<span class="topic">Safe releases on Kubernetes<small>canary + SLO + auto-rollback</small></span></div>'
+            f'{scenes}<div id="cap"></div>'
             '<div id="brand"><b>Sufyan Ahmad</b> · DevOps</div>'
             f'<script>const TL={json.dumps(tl)};const CAP={json.dumps(caps)};const TOTAL={total};{JS}</script></body></html>')
     out = HERE / "page.html"                  # next to script.py so ../../shots resolves to video/shots
