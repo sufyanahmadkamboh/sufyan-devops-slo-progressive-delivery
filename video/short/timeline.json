@@ -1,0 +1,95 @@
+{
+ "total": 59.17729166666667,
+ "lines": [
+  {
+   "id": "l01",
+   "start": 0.0,
+   "dur": 3.806,
+   "sfx": "error"
+  },
+  {
+   "id": "l02",
+   "start": 3.806,
+   "dur": 1.021,
+   "sfx": "pop"
+  },
+  {
+   "id": "l03",
+   "start": 4.828,
+   "dur": 5.768,
+   "sfx": "scene"
+  },
+  {
+   "id": "l04",
+   "start": 10.596,
+   "dur": 2.715,
+   "sfx": "error"
+  },
+  {
+   "id": "l05",
+   "start": 13.311,
+   "dur": 3.144,
+   "sfx": "chapter"
+  },
+  {
+   "id": "l06",
+   "start": 16.455,
+   "dur": 3.282,
+   "sfx": "scene"
+  },
+  {
+   "id": "l07",
+   "start": 19.737,
+   "dur": 5.035,
+   "sfx": "scene"
+  },
+  {
+   "id": "l08",
+   "start": 24.772,
+   "dur": 4.523,
+   "sfx": "chapter"
+  },
+  {
+   "id": "l09",
+   "start": 29.295,
+   "dur": 4.799,
+   "sfx": "pop"
+  },
+  {
+   "id": "l10",
+   "start": 34.093,
+   "dur": 3.924,
+   "sfx": "error"
+  },
+  {
+   "id": "l11",
+   "start": 38.017,
+   "dur": 2.474,
+   "sfx": "success"
+  },
+  {
+   "id": "l12",
+   "start": 40.491,
+   "dur": 5.803,
+   "sfx": "scene"
+  },
+  {
+   "id": "l13",
+   "start": 46.295,
+   "dur": 4.342,
+   "sfx": "error"
+  },
+  {
+   "id": "l14",
+   "start": 50.636,
+   "dur": 4.544,
+   "sfx": "success"
+  },
+  {
+   "id": "l16",
+   "start": 55.181,
+   "dur": 3.597,
+   "sfx": "outro"
+  }
+ ]
+}

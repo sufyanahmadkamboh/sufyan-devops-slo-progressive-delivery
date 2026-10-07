@@ -1,0 +1,167 @@
+[
+ {
+  "id": "l01",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "This release was broken. It rolled itself back in forty-two seconds."
+ },
+ {
+  "id": "l02",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "Nobody touched it."
+ },
+ {
+  "id": "l03",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "Here's the problem. A normal Kubernetes rollout sends every single user to the new version within minutes."
+ },
+ {
+  "id": "l04",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "If that version is broken, everyone gets the bug."
+ },
+ {
+  "id": "l05",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "So I built a release that tests itself on real traffic."
+ },
+ {
+  "id": "l06",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "The new version gets one pod in five. Twenty percent."
+ },
+ {
+  "id": "l07",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "Every fifteen seconds, Prometheus checks its errors and its latency against an S-L-O."
+ },
+ {
+  "id": "l08",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "Now watch. Version one point two fails a quarter of its requests."
+ },
+ {
+  "id": "l09",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "Error ratio: zero point three. The limit: zero point zero seven."
+ },
+ {
+  "id": "l10",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "Two strikes. Rollout aborted. Every user back on the good version."
+ },
+ {
+  "id": "l11",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "Forty-two seconds. Zero humans."
+ },
+ {
+  "id": "l12",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "Slow instead of broken? Six hundred milliseconds of extra latency. Caught in forty-three seconds."
+ },
+ {
+  "id": "l13",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "Prometheus goes down in the middle of a release? No data. No promotion."
+ },
+ {
+  "id": "l14",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "And a healthy release? Promoted to one hundred percent, while nobody was watching."
+ },
+ {
+  "id": "l16",
+  "voice": "Steve",
+  "settings": {
+   "model": "mtl_tts",
+   "exaggeration": 0.65,
+   "cfg_weight": 0.4,
+   "seed": 3000
+  },
+  "tts": "The full project is free. Follow, and I'll show you how to build it."
+ }
+]
