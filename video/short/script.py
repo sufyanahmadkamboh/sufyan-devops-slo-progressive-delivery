@@ -7,6 +7,8 @@ Every number is from the recorded run (video/recordings/) and docs/test-results.
 Logos (logos/): Kubernetes, Prometheus and Argo from the CNCF artwork repository; Grafana from the Grafana repository.
 """
 
+NAME = "safe-releases-short"
+HEADER = {"logo": "kubernetes-icon-color.svg", "topic": "Safe releases on Kubernetes", "sub": "canary + SLO + auto-rollback"}
 SHOT = "../shots"
 
 

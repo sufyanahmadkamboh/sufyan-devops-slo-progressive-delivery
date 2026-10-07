@@ -20,10 +20,12 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent))
-import audio_assets  # noqa: E402
-from script import LINES  # noqa: E402
+from script import HEADER, LINES, NAME  # noqa: E402
 
-NAME = "safe-releases-short"
+try:                                            # the sound effects of this repository's long video
+    import audio_assets as sfx_module  # noqa: E402
+except ImportError:
+    import sound_effects as sfx_module  # noqa: E402
 OUT = HERE.parent / "out" / "short"
 VO = HERE / "voiceover"
 FPS, W, H = 30, 1080, 1920
@@ -89,6 +91,11 @@ body::before{content:"";position:absolute;inset:0;background:radial-gradient(900
 .down{display:flex;align-items:center;gap:30px}.down img{height:230px;filter:grayscale(1) brightness(.7)}.down span{font-size:170px}
 .logos{display:flex;gap:44px}.logos img{height:120px}
 .title.sm{font-size:84px}
+.term{width:1000px;background:#0a0f18;border:5px solid #2f5585;border-radius:26px;padding:22px 30px;text-align:left;font:600 36px/1.45 "JetBrains Mono",Consolas,monospace;color:#c9d6e6}
+.term div{white-space:pre-wrap;word-break:break-word}.term .tbar{color:var(--muted);font-size:28px;margin-bottom:8px;opacity:1;transform:none}
+.term .c{color:var(--sky)}.term .r{color:#ff6b7a}.term .g{color:var(--ok)}.term .y{color:var(--amber)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:1000px}.stat{background:#122038;border:5px solid #2f5585;border-radius:26px;padding:22px 26px}
+.stat b{display:block;font-size:92px;font-weight:900;line-height:1.05}.stat span{font-size:34px;color:var(--muted);font-weight:800}
 .scene{position:absolute;left:0;right:0;top:190px;height:1030px;display:none;flex-direction:column;align-items:center;justify-content:center;gap:34px;text-align:center}
 .scene.on{display:flex}
 [data-at]{opacity:0;transform:scale(.6)}
@@ -161,10 +168,10 @@ window.render = render; window.__ready = true;
 def page(tl: list[dict], caps: list[dict], total: float) -> Path:
     scenes = "".join(f'<section class="scene">{ln["body"]}</section>' for ln in LINES)
     html = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><title>short</title>'
-            '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&display=swap" rel="stylesheet">'
+            '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">'
             f'<style>{CSS}</style></head><body><div id="bar"></div>'
-            '<div id="head"><img src="logos/kubernetes-icon-color.svg"><span class="pill">DevSecOps</span>'
-            '<span class="topic">Safe releases on Kubernetes<small>canary + SLO + auto-rollback</small></span></div>'
+            f'<div id="head"><img src="logos/{HEADER["logo"]}"><span class="pill">DevSecOps</span>'
+            f'<span class="topic">{HEADER["topic"]}<small>{HEADER["sub"]}</small></span></div>'
             f'{scenes}<div id="cap"></div>'
             '<div id="brand"><b>Sufyan Ahmad</b> · DevOps</div>'
             f'<script>const TL={json.dumps(tl)};const CAP={json.dumps(caps)};const TOTAL={total};{JS}</script></body></html>')
@@ -212,7 +219,7 @@ def main() -> None:
        "acompressor=threshold=-26dB:ratio=3:attack=5:release=160:makeup=4dB,loudnorm=I=-16:TP=-2:LRA=9,aresample=48000",
        "-ac", "1", "voice.wav")
     events = [(s["start"], s["sfx"]) for s in tl]
-    audio_assets.render_mix(OUT / "voice.wav", OUT / "mix.wav", total, events)
+    sfx_module.render_mix(OUT / "voice.wav", OUT / "mix.wav", total, events)
     m = json.loads(re.search(r"\{[^{}]*\}", ff("-nostats", "-i", "mix.wav", "-af",
                    "loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json", "-f", "null", "-", capture=True)).group(0))
     ff("-loglevel", "error", "-i", "mix.wav", "-af",
