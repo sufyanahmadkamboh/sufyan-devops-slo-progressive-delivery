@@ -24,7 +24,7 @@
 | 8 | Bar chart: seconds from release to decision | Measured results (lab) |
 | 9 | Metro-map learning path through the tools + stats | Study material |
 | 10 | Staircase of terminal windows | How to run it yourself |
-| 11 | QR codes to the repo and portfolio | Links + question |
+| 11 | QR codes to the video (YouTube), the repo and the portfolio | Links + question |
 
 ## How to post
 

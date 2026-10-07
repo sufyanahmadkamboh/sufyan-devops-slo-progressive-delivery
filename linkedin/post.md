@@ -27,6 +27,7 @@ If yes twice, it rolls back automatically. No human needed.
 
 👉 Swipe through the slides for the full picture: the problem, when to use it, architecture, how it works, results, and how to run it yourself in about 3 minutes.
 
+🎬 15-minute video walkthrough: https://youtu.be/U_sdKzHRKGE
 💻 Code + study guide: https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery
 🌐 Slides + all my projects: https://sufyanahmadkamboh.github.io/#story=slo-progressive-delivery&slide=1
 

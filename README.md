@@ -11,7 +11,7 @@ Every release of the service goes out as a **canary**. While traffic shifts 20% 
 > 📚 **New to DevOps? Start with the [study guide](study/README.md)** (also available as a single **[PDF](study/study-guide.pdf)**). It teaches every tool in this project from zero: what it is, why it's used here, how it's wired in, and hands-on labs.
 > It covers Docker, Kubernetes, kind, Helm, SLOs, Prometheus, Argo Rollouts, Grafana, GitHub Actions and the security tools, plus 8 guided labs and 25 interview questions.
 
-> 🎬 **Prefer to watch? The [video](video/README.md)** explains the project in plain words, then shows a real run: a healthy release promoted, an error regression and a latency regression rolled back by themselves, and a monitoring outage that fails safe. Every output and dashboard on screen comes from that run.
+> 🎬 **Prefer to watch? [Watch the 15-minute video on YouTube](https://youtu.be/U_sdKzHRKGE)** ([how it is made](video/README.md)). It explains the project in plain words, then shows a real run: a healthy release promoted, an error regression and a latency regression rolled back by themselves, and a monitoring outage that fails safe. Every output and dashboard on screen comes from that run.
 
 ---
 
