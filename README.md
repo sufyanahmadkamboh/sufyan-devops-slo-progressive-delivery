@@ -94,7 +94,6 @@ kind/cluster.yaml       local cluster definition
 docs/                   architecture, runbook, troubleshooting, test results
 study/                  beginner study guide: every tool explained, labs, glossary, interview questions
 video/                  the explainer video: recorded run, script and build pipeline
-linkedin/               project write-up
 ```
 
 ## 7. Prerequisites

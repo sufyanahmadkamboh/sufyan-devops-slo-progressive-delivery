@@ -1,5 +1,7 @@
 # Video: Safe releases that undo themselves
 
+> The YouTube upload package (`youtube/`) is written by the build and kept locally; it is not published in this repository.
+
 An explainer of this project for beginners, as a conversation between a senior DevOps engineer and a junior
 colleague. The first half explains the idea in plain words: the problem, SLIs, SLOs, error budgets and burn rates,
 the architecture and the code. The second half is a **real run of the lab** on a local kind cluster:
