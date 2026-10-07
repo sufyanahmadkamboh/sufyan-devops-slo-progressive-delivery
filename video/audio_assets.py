@@ -286,7 +286,8 @@ def duck_gain(voice: np.ndarray, depth_db: float = 8.0) -> np.ndarray:
     return np.interp(np.arange(len(voice)), np.arange(frames) * hop, out).astype(np.float32)
 
 
-def render_mix(voice_path: Path, out_path: Path, total: float, events: list[tuple[float, str]], seed: int = 1) -> None:
+def render_mix(voice_path: Path, out_path: Path, total: float, events: list[tuple[float, str]], seed: int = 1,
+               with_music: bool = False) -> None:
     rate, voice = wavfile.read(voice_path)
     voice = voice.astype(np.float32) / (32768.0 if voice.dtype == np.int16 else 1.0)
     if voice.ndim == 2:
@@ -295,9 +296,11 @@ def render_mix(voice_path: Path, out_path: Path, total: float, events: list[tupl
         voice = resample_poly(voice, SR, rate).astype(np.float32)
     n = max(len(voice), int(total * SR))
     voice = np.pad(voice, (0, n - len(voice)))
-    bed = music(n / SR, seed)[:n]
-    bed = np.pad(bed, ((0, n - len(bed)), (0, 0)))
-    bed *= duck_gain(voice)[:, None]
+    bed = np.zeros((n, 2), dtype=np.float32)
+    if with_music:                                                       # off by default: voice and effects only
+        bed = music(n / SR, seed)[:n]
+        bed = np.pad(bed, ((0, n - len(bed)), (0, 0)))
+        bed *= duck_gain(voice)[:, None]
     fx = np.zeros((n, 2), dtype=np.float32)
     cache: dict[str, np.ndarray] = {}
     for when, kind in events:

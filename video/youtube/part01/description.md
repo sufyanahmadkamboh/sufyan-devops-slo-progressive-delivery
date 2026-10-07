@@ -6,16 +6,16 @@ A senior DevOps engineer explains the project to a junior colleague: the problem
 
 Chapters
 0:00 The problem
-2:08 SLI, SLO, error budget
-4:21 Architecture
-8:28 A real run
-10:15 Release 1: a healthy version
-11:58 Release 2: 25% errors
-13:41 Release 3: 600 ms slower
-14:56 When monitoring breaks
-15:47 Security
-16:37 Tests and CI
-17:24 Recap
+1:44 SLI, SLO, error budget
+3:37 Architecture
+7:00 A real run
+8:27 Release 1: a healthy version
+9:51 Release 2: 25% errors
+11:16 Release 3: 600 ms slower
+12:17 When monitoring breaks
+13:00 Security
+13:42 Tests and CI
+14:20 Recap
 
 The project (free, MIT, with a beginner study guide): https://github.com/sufyanahmadkamboh/sufyan-devops-slo-progressive-delivery
 Try it yourself: clone the repository, run scripts/up.sh, then scripts/e2e.sh.

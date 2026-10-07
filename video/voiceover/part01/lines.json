@@ -1,0 +1,737 @@
+[
+ {
+  "id": "s001_00",
+  "who": "junior",
+  "text": "Last week a release broke the checkout for everyone, and the pipeline was green the whole time. How does that even happen?",
+  "tts": "Last week a release broke the checkout for everyone, and the pipeline was green the whole time. How does that even happen?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s001_01",
+  "who": "senior",
+  "text": "Because the pipeline only asked one question: did the deployment succeed? With a normal rolling update, the new version replaces the old pods one by one, and within minutes it serves every single user.",
+  "tts": "Because the pipeline only asked one question: did the deployment succeed? With a normal rolling update, the new version replaces the old pods one by one, and within minutes it serves every single user.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s001_02",
+  "who": "senior",
+  "text": "And then you find out the hard way: from an alert, or from a customer.",
+  "tts": "And then you find out the hard way: from an alert, or from a customer.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s001_03",
+  "who": "senior",
+  "text": "Then a person has to decide, under pressure, whether it is bad enough to roll back. Usually while the error count keeps climbing.",
+  "tts": "Then a person has to decide, under pressure, whether it is bad enough to roll back. Usually while the error count keeps climbing.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s001_04",
+  "who": "junior",
+  "text": "So what does this project do differently?",
+  "tts": "So what does this project do differently?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s001_05",
+  "who": "senior",
+  "text": "Every release goes out as a canary. The new version first gets only twenty percent of the traffic.",
+  "tts": "Every release goes out as a canary. The new version first gets only twenty percent of the traffic.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s001_06",
+  "who": "senior",
+  "text": "While the traffic grows, the new version is measured against agreed targets, called SLOs, every fifteen to thirty seconds.",
+  "tts": "While the traffic grows, the new version is measured against agreed targets, called S-L-Os, every fifteen to thirty seconds.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s001_07",
+  "who": "senior",
+  "text": "If it stays healthy, it is promoted to a hundred percent with nobody in the loop. If it fails too often, or gets too slow, it is rolled back automatically, and the old version keeps serving users.",
+  "tts": "If it stays healthy, it is promoted to a hundred percent with nobody in the loop. If it fails too often, or gets too slow, it is rolled back automatically, and the old version keeps serving users.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s002_00",
+  "who": "junior",
+  "text": "Can you explain it without the jargon?",
+  "tts": "Can you explain it without the jargon?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s002_01",
+  "who": "senior",
+  "text": "Think of a restaurant with a new recipe. You do not serve it to the whole room. You serve it to one table in five, and you watch.",
+  "tts": "Think of a restaurant with a new recipe. You do not serve it to the whole room. You serve it to one table in five, and you watch.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s002_02",
+  "who": "senior",
+  "text": "If those tables are happy, you serve it to two tables in five,",
+  "tts": "If those tables are happy, you serve it to two tables in five,",
+  "voice": "Steve"
+ },
+ {
+  "id": "s002_03",
+  "who": "senior",
+  "text": "then three,",
+  "tts": "then three,",
+  "voice": "Steve"
+ },
+ {
+  "id": "s002_04",
+  "who": "senior",
+  "text": "then four,",
+  "tts": "then four,",
+  "voice": "Steve"
+ },
+ {
+  "id": "s002_05",
+  "who": "senior",
+  "text": "and finally to everyone.",
+  "tts": "and finally to everyone.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s002_06",
+  "who": "senior",
+  "text": "If the tables complain, you stop at once, and everybody gets the old recipe again. Only a few tables ever tasted the bad one.",
+  "tts": "If the tables complain, you stop at once, and everybody gets the old recipe again. Only a few tables ever tasted the bad one.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s002_07",
+  "who": "senior",
+  "text": "The important part: how many complaints are too many is agreed before the dinner starts. Nobody argues about it in the middle of the rush. In our world, that agreed number is the SLO.",
+  "tts": "The important part: how many complaints are too many is agreed before the dinner starts. Nobody argues about it in the middle of the rush. In our world, that agreed number is the S-L-O.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s003_00",
+  "who": "junior",
+  "text": "I hear SLO, SLI and error budget all the time. What do they actually mean?",
+  "tts": "I hear S-L-O, S-L-I and error budget all the time. What do they actually mean?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s003_01",
+  "who": "senior",
+  "text": "An SLI, a service level indicator, is simply something we measure. Here there are two: the share of requests that fail with a server error, and how long requests take. For time we use the p95: ninety-five percent of requests are faster than this value.",
+  "tts": "An S-L-I, a service level indicator, is simply something we measure. Here there are two: the share of requests that fail with a server error, and how long requests take. For time we use the P ninety-five: ninety-five percent of requests are faster than this value.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s003_02",
+  "who": "senior",
+  "text": "The SLO, the service level objective, is the target for that measurement. For this orders API: 99.5% of requests must succeed, and the p95 must stay under 300 ms.",
+  "tts": "The S-L-O, the service level objective, is the target for that measurement. For this orders A-P-I: ninety-nine point five percent of requests must succeed, and the P ninety-five must stay under 300 milliseconds.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s003_03",
+  "who": "senior",
+  "text": "The error budget is what is left over. If 99.5% must succeed, then 0.5% may fail. That is not a failure of the team: it is a budget the team is allowed to spend, on releases, experiments and bad luck.",
+  "tts": "The error budget is what is left over. If ninety-nine point five percent must succeed, then zero point five percent may fail. That is not a failure of the team: it is a budget the team is allowed to spend, on releases, experiments and bad luck.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s003_04",
+  "who": "senior",
+  "text": "And the burn rate says how fast you are spending it. A burn rate of one spends the budget exactly over thirty days. A burn rate of 14.4 spends two percent of the whole month's budget in a single hour. That is fast enough to wake someone up.",
+  "tts": "And the burn rate says how fast you are spending it. A burn rate of one spends the budget exactly over thirty days. A burn rate of fourteen point four spends two percent of the whole month's budget in a single hour. That is fast enough to wake someone up.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s004_00",
+  "who": "junior",
+  "text": "So how does the canary check turn the SLO into a yes or no?",
+  "tts": "So how does the canary check turn the S-L-O into a yes or no?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s004_01",
+  "who": "senior",
+  "text": "With one multiplication. The error budget is 0.005. The fastest burn rate we accept is 14.4. 0.005 times 14.4 is 0.072. So the canary may fail at most 7.2% of its requests.",
+  "tts": "With one multiplication. The error budget is zero point zero zero five. The fastest burn rate we accept is fourteen point four. Zero point zero zero five times fourteen point four is zero point zero seven two. So the canary may fail at most seven point two percent of its requests.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s004_02",
+  "who": "senior",
+  "text": "Below that, the release carries on.",
+  "tts": "Below that, the release carries on.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s004_03",
+  "who": "senior",
+  "text": "Above it, the canary is burning budget as fast as an incident would, and the release is stopped.",
+  "tts": "Above it, the canary is burning budget as fast as an incident would, and the release is stopped.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s004_04",
+  "who": "senior",
+  "text": "And notice where 14.4 comes from: it is the same threshold as the alert that pages the on-call engineer. A release that would page someone is never promoted. The deployment and the alerting share one definition of healthy.",
+  "tts": "And notice where fourteen point four comes from: it is the same threshold as the alert that pages the on-call engineer. A release that would page someone is never promoted. The deployment and the alerting share one definition of healthy.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s005_00",
+  "who": "junior",
+  "text": "What is actually running? Draw me the picture.",
+  "tts": "What is actually running? Draw me the picture.",
+  "voice": "Cora"
+ },
+ {
+  "id": "s005_01",
+  "who": "senior",
+  "text": "It starts in GitHub Actions. After the tests, a release is just a Helm upgrade with a new image tag.",
+  "tts": "It starts in GitHub Actions. After the tests, a release is just a Helm upgrade with a new image tag.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s005_02",
+  "who": "senior",
+  "text": "Argo Rollouts receives it. It replaces the normal Kubernetes Deployment with a Rollout, which knows how to move traffic in steps: twenty, forty, sixty, eighty, a hundred percent.",
+  "tts": "Argo Rollouts receives it. It replaces the normal Kubernetes Deployment with a Rollout, which knows how to move traffic in steps: twenty, forty, sixty, eighty, a hundred percent.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s005_03",
+  "who": "senior",
+  "text": "During a release there are two kinds of pods: the stable pods with the old version, and the canary pods with the new one. Every pod exposes metrics, labelled with its revision.",
+  "tts": "During a release there are two kinds of pods: the stable pods with the old version, and the canary pods with the new one. Every pod exposes metrics, labelled with its revision.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s005_04",
+  "who": "senior",
+  "text": "In a lab there are no real users, so a small load generator sends twenty requests per second. Without traffic there is nothing to measure.",
+  "tts": "In a lab there are no real users, so a small load generator sends twenty requests per second. Without traffic there is nothing to measure.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s005_05",
+  "who": "senior",
+  "text": "Prometheus scrapes every pod, computes the SLIs, and evaluates the burn-rate alerts.",
+  "tts": "Prometheus scrapes every pod, computes the S-L-Is, and evaluates the burn-rate alerts.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s005_06",
+  "who": "senior",
+  "text": "Every fifteen to thirty seconds, Argo Rollouts asks Prometheus about the canary pods only.",
+  "tts": "Every fifteen to thirty seconds, Argo Rollouts asks Prometheus about the canary pods only.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s005_07",
+  "who": "senior",
+  "text": "Grafana shows all of it on one dashboard: the SLOs, the error budget, and canary against stable.",
+  "tts": "Grafana shows all of it on one dashboard: the S-L-Os, the error budget, and canary against stable.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s005_08",
+  "who": "senior",
+  "text": "And the answer decides the release: pass means promote, fail means abort, and all traffic goes back to the stable pods.",
+  "tts": "And the answer decides the release: pass means promote, fail means abort, and all traffic goes back to the stable pods.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s006_00",
+  "who": "junior",
+  "text": "Where are all these numbers written down?",
+  "tts": "Where are all these numbers written down?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s006_01",
+  "who": "senior",
+  "text": "In one place: the Helm values file. The SLO targets, the burn rate, how often to measure, and the canary steps. Changing the policy is a reviewed pull request, not a decision in the middle of an incident.",
+  "tts": "In one place: the Helm values file. The S-L-O targets, the burn rate, how often to measure, and the canary steps. Changing the policy is a reviewed pull request, not a decision in the middle of an incident.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s006_02",
+  "who": "senior",
+  "text": "Two settings deserve attention. failureLimit 1 means one bad measurement is forgiven, because one noisy sample should not kill a good release. The second bad one aborts.",
+  "tts": "Two settings deserve attention. Failure limit one means one bad measurement is forgiven, because one noisy sample should not kill a good release. The second bad one aborts.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s006_03",
+  "who": "senior",
+  "text": "And consecutiveErrorLimit 4: if Prometheus cannot answer five times in a row, the analysis gives up and the release is aborted. We will break Prometheus on purpose later to prove it.",
+  "tts": "And consecutive error limit four: if Prometheus cannot answer five times in a row, the analysis gives up and the release is aborted. We will break Prometheus on purpose later to prove it.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s006_04",
+  "who": "senior",
+  "text": "With five replicas, each step of twenty percent moves exactly one pod from the old version to the new.",
+  "tts": "With five replicas, each step of twenty percent moves exactly one pod from the old version to the new.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s007_00",
+  "who": "junior",
+  "text": "And what exactly does it ask Prometheus?",
+  "tts": "And what exactly does it ask Prometheus?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s007_01",
+  "who": "senior",
+  "text": "This is the AnalysisTemplate. The first check is the canary's error ratio: failed requests divided by all requests, over the last minute.",
+  "tts": "This is the analysis template. The first check is the canary's error ratio: failed requests divided by all requests, over the last minute.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s007_02",
+  "who": "senior",
+  "text": "The important detail is the selector. Every pod carries a label with the hash of its revision, and Argo Rollouts fills in the canary's hash. So the stable pods cannot hide a bad canary in the average.",
+  "tts": "The important detail is the selector. Every pod carries a label with the hash of its revision, and Argo Rollouts fills in the canary's hash. So the stable pods cannot hide a bad canary in the average.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s007_03",
+  "who": "senior",
+  "text": "The success condition has a second safety detail: the result must exist. If no traffic reached the canary, there is no data, and no data counts as a failure. A version nobody tested is never promoted.",
+  "tts": "The success condition has a second safety detail: the result must exist. If no traffic reached the canary, there is no data, and no data counts as a failure. A version nobody tested is never promoted.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s007_04",
+  "who": "senior",
+  "text": "The second check, below it, works the same way for the p95 latency, with the 300 ms limit.",
+  "tts": "The second check, below it, works the same way for the P ninety-five latency, with the 300 milliseconds limit.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s008_00",
+  "who": "junior",
+  "text": "The canary is protected. What about problems that show up later, after a release?",
+  "tts": "The canary is protected. What about problems that show up later, after a release?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s008_01",
+  "who": "senior",
+  "text": "That is the job of the burn-rate alerts. They follow the Google SRE Workbook. The fast-burn alert pages when the budget burns fourteen times too fast, over one hour, and also over the last five minutes.",
+  "tts": "That is the job of the burn-rate alerts. They follow the Google S-R-E Workbook. The fast-burn alert pages when the budget burns fourteen times too fast, over one hour, and also over the last five minutes.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s008_02",
+  "who": "senior",
+  "text": "Why two windows? The long window proves it is significant, not a blip. The short window proves it is still happening now, so the alert stops soon after the problem does.",
+  "tts": "Why two windows? The long window proves it is significant, not a blip. The short window proves it is still happening now, so the alert stops soon after the problem does.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s008_03",
+  "who": "senior",
+  "text": "A slower burn over six hours also pages, and a slow leak over a whole day opens a ticket instead of waking anyone up.",
+  "tts": "A slower burn over six hours also pages, and a slow leak over a whole day opens a ticket instead of waking anyone up.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s008_04",
+  "who": "senior",
+  "text": "There is a matching alert for latency. And all four rules are unit-tested with promtool, so we know they fire exactly when they should.",
+  "tts": "There is a matching alert for latency. And all four rules are unit-tested with prom-tool, so we know they fire exactly when they should.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s009_00",
+  "who": "junior",
+  "text": "Can I see it working for real, not just on slides?",
+  "tts": "Can I see it working for real, not just on slides?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s009_01",
+  "who": "senior",
+  "text": "Everything you will see now is a real run, recorded on my laptop. One script, scripts/up.sh, builds the whole lab: a local Kubernetes cluster with kind, Argo Rollouts, Prometheus with the SLO rules, Grafana with the dashboard, and version 1.0.0 of the orders API with its load generator.",
+  "tts": "Everything you will see now is a real run, recorded on my laptop. One script, scripts, up dot S-H, builds the whole lab: a local Kubernetes cluster with kind, Argo Rollouts, Prometheus with the S-L-O rules, Grafana with the dashboard, and version 1 point 0 point 0 of the orders A-P-I with its load generator.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s009_02",
+  "who": "senior",
+  "text": "It took 2 min 21 s. No cloud account, nothing to pay.",
+  "tts": "It took 2 minutes 21 seconds. No cloud account, nothing to pay.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s009_03",
+  "who": "senior",
+  "text": "The cluster has one control plane and two worker nodes, so the stable and canary pods spread across machines, like in a real cluster.",
+  "tts": "The cluster has one control plane and two worker nodes, so the stable and canary pods spread across machines, like in a real cluster.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s010_00",
+  "who": "junior",
+  "text": "What am I looking at?",
+  "tts": "What am I looking at?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s010_01",
+  "who": "senior",
+  "text": "This is the Argo Rollouts view of the service. Status healthy, step eight of eight, weight one hundred: version 1.0.0 is the stable version, and it serves everything.",
+  "tts": "This is the Argo Rollouts view of the service. Status healthy, step eight of eight, weight one hundred: version 1 point 0 point 0 is the stable version, and it serves everything.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s010_02",
+  "who": "senior",
+  "text": "Below it, the tree: one ReplicaSet, revision one, with five pods. Remember this shape. During a release, a second ReplicaSet appears next to it.",
+  "tts": "Below it, the tree: one replica set, revision one, with five pods. Remember this shape. During a release, a second replica set appears next to it.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s011_00",
+  "who": "junior",
+  "text": "And the dashboard?",
+  "tts": "And the dashboard?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s011_01",
+  "who": "senior",
+  "text": "At the top: availability one hundred percent, the whole error budget left, burn rate zero, latency inside the target, and no alert firing.",
+  "tts": "At the top: availability one hundred percent, the whole error budget left, burn rate zero, latency inside the target, and no alert firing.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s011_02",
+  "who": "senior",
+  "text": "Below: the burn rate over several windows, and then the error ratio and the p95 latency split by revision. That split is what lets us compare a canary with the stable version, side by side.",
+  "tts": "Below: the burn rate over several windows, and then the error ratio and the P ninety-five latency split by revision. That split is what lets us compare a canary with the stable version, side by side.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s012_00",
+  "who": "junior",
+  "text": "Now release a new version. What happens?",
+  "tts": "Now release a new version. What happens?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s012_01",
+  "who": "senior",
+  "text": "The test script, e2e.sh, releases version 1.1.0, a healthy version. It uses shorter pauses than production, thirty seconds instead of sixty, so the whole proof fits in a few minutes. The decision rules are exactly the same.",
+  "tts": "The test script, E-2-E dot S-H, releases version 1 point 1 point 0, a healthy version. It uses shorter pauses than production, thirty seconds instead of sixty, so the whole proof fits in a few minutes. The decision rules are exactly the same.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s012_02",
+  "who": "senior",
+  "text": "Look at the tree now. Revision two appeared, with one canary pod, next to the four stable pods of revision one. Weight twenty: one pod in five. And there is an AnalysisRun, the background check, already running.",
+  "tts": "Look at the tree now. Revision two appeared, with one canary pod, next to the four stable pods of revision one. Weight twenty: one pod in five. And there is an analysis run, the background check, already running.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s013_00",
+  "who": "senior",
+  "text": "Argo Rollouts also has a dashboard. Here the release is at sixty percent: the steps on the left, three canary pods with version 1.1.0, two stable pods with 1.0.0, and the analysis run doing its work.",
+  "tts": "Argo Rollouts also has a dashboard. Here the release is at sixty percent: the steps on the left, three canary pods with version 1 point 1 point 0, two stable pods with 1 point 0 point 0, and the analysis run doing its work.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s013_01",
+  "who": "junior",
+  "text": "So nobody pressed a button here?",
+  "tts": "So nobody pressed a button here?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s013_02",
+  "who": "senior",
+  "text": "Nobody. Every step waits, the analysis keeps measuring, and the rollout moves on by itself.",
+  "tts": "Nobody. Every step waits, the analysis keeps measuring, and the rollout moves on by itself.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s014_00",
+  "who": "senior",
+  "text": "After 2 min 33 s, version 1.1.0 was promoted to a hundred percent.",
+  "tts": "After 2 minutes 33 seconds, version 1 point 1 point 0 was promoted to a hundred percent.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s014_01",
+  "who": "senior",
+  "text": "These are the real measurements. 9 error-ratio checks, the highest 0.000. 9 latency checks, with a p95 of about 24 milliseconds, far under the 300 millisecond limit.",
+  "tts": "These are the real measurements. 9 error-ratio checks, the highest zero point zero zero zero. 9 latency checks, with a P ninety-five of about 24 milliseconds, far under the 300 millisecond limit.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s014_02",
+  "who": "senior",
+  "text": "A boring release, exactly as it should be. And nobody had to watch it.",
+  "tts": "A boring release, exactly as it should be. And nobody had to watch it.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s015_00",
+  "who": "junior",
+  "text": "And a bad release?",
+  "tts": "And a bad release?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s015_01",
+  "who": "senior",
+  "text": "Version 1.2.0 is broken on purpose. The fault injection makes it fail twenty-five percent of requests: the kind of bug that slips through tests because it only shows up with real traffic.",
+  "tts": "Version 1 point 2 point 0 is broken on purpose. The fault injection makes it fail twenty-five percent of requests: the kind of bug that slips through tests because it only shows up with real traffic.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s015_02",
+  "who": "senior",
+  "text": "And here is the rollout a few seconds later. Status: degraded. Rollout aborted. The message even says why: the metric canary-error-ratio failed two times, and only one failure is allowed. The weight is back to zero.",
+  "tts": "And here is the rollout a few seconds later. Status: degraded. Rollout aborted. The message even says why: the metric canary-error-ratio failed two times, and only one failure is allowed. The weight is back to zero.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s016_00",
+  "who": "senior",
+  "text": "On Grafana you can see the spike, and you can see whose spike it is: the error ratio of the canary revision only. The stable revision stays at zero.",
+  "tts": "On Grafana you can see the spike, and you can see whose spike it is: the error ratio of the canary revision only. The stable revision stays at zero.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s016_01",
+  "who": "senior",
+  "text": "That is why the analysis looks at the canary's own pods. Mixed into the average, one pod's errors would look small. Measured alone, they are impossible to miss.",
+  "tts": "That is why the analysis looks at the canary's own pods. Mixed into the average, one pod's errors would look small. Measured alone, they are impossible to miss.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s017_00",
+  "who": "senior",
+  "text": "The two measurements were 0.305 and 0.244: about the twenty-five percent we injected. The limit is 0.072. Two failures, so the rollout was aborted.",
+  "tts": "The two measurements were zero point three zero five and zero point two four four: about the twenty-five percent we injected. The limit is zero point zero seven two. Two failures, so the rollout was aborted.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s017_01",
+  "who": "senior",
+  "text": "From release to abort: 42 seconds. Then the test sent forty requests through the Service and checked that every answer came from version 1.1.0. Users were back on the good version.",
+  "tts": "From release to abort: 42 seconds. Then the test sent forty requests through the Service and checked that every answer came from version 1 point 1 point 0. Users were back on the good version.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s017_02",
+  "who": "junior",
+  "text": "So only one pod in five ever served the bad version, and for less than a minute.",
+  "tts": "So only one pod in five ever served the bad version, and for less than a minute.",
+  "voice": "Cora"
+ },
+ {
+  "id": "s017_03",
+  "who": "senior",
+  "text": "Exactly. With a rolling update, it would have reached every user.",
+  "tts": "Exactly. With a rolling update, it would have reached every user.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s018_00",
+  "who": "junior",
+  "text": "What if the new version does not fail, but is just slow?",
+  "tts": "What if the new version does not fail, but is just slow?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s018_01",
+  "who": "senior",
+  "text": "That is release three. Version 1.3.0 answers correctly, but adds 600 milliseconds to every request. No errors at all, so an error check alone would happily promote it.",
+  "tts": "That is release three. Version 1 point 3 point 0 answers correctly, but adds 600 milliseconds to every request. No errors at all, so an error check alone would happily promote it.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s018_02",
+  "who": "senior",
+  "text": "The latency check caught it: canary-p95-latency failed twice, and the rollout was aborted 43 seconds after the release.",
+  "tts": "The latency check caught it: canary-P ninety-five-latency failed twice, and the rollout was aborted 43 seconds after the release.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s018_03",
+  "who": "senior",
+  "text": "The measured p95 was 0.975 seconds. Why not exactly 0.6? Because the histogram's buckets jump from half a second to one second, and Prometheus estimates inside the bucket. The estimate is rough, but the breach is obvious: far above 300 milliseconds.",
+  "tts": "The measured P ninety-five was zero point nine seven five seconds. Why not exactly zero point six? Because the histogram's buckets jump from half a second to one second, and Prometheus estimates inside the bucket. The estimate is rough, but the breach is obvious: far above 300 milliseconds.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s018_04",
+  "who": "senior",
+  "text": "And the last line: all end-to-end scenarios passed. One good release promoted, two bad releases rolled back by themselves.",
+  "tts": "And the last line: all end-to-end scenarios passed. One good release promoted, two bad releases rolled back by themselves.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s019_00",
+  "who": "senior",
+  "text": "Here it is on Grafana: the p95 of the canary revision jumps to about a second, while the stable revision stays at about twenty milliseconds.",
+  "tts": "Here it is on Grafana: the P ninety-five of the canary revision jumps to about a second, while the stable revision stays at about twenty milliseconds.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s020_00",
+  "who": "junior",
+  "text": "What if Prometheus itself goes down in the middle of a release? Does the release just continue blind?",
+  "tts": "What if Prometheus itself goes down in the middle of a release? Does the release just continue blind?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s020_01",
+  "who": "senior",
+  "text": "That is exactly what this test checks. It releases version 1.4.0, which is perfectly healthy, and while the canary is running it scales Prometheus down to zero.",
+  "tts": "That is exactly what this test checks. It releases version 1 point 4 point 0, which is perfectly healthy, and while the canary is running it scales Prometheus down to zero.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s020_02",
+  "who": "senior",
+  "text": "The analysis can no longer measure anything. After five errors in a row, the analysis run ends in Error, and the rollout is aborted.",
+  "tts": "The analysis can no longer measure anything. After five errors in a row, the analysis run ends in Error, and the rollout is aborted.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s020_03",
+  "who": "senior",
+  "text": "Even though 1.4.0 was actually fine! That is on purpose: a release that cannot be verified is not promoted. Failing safe means: when in doubt, keep the version we know works.",
+  "tts": "Even though 1 point 4 point 0 was actually fine! That is on purpose: a release that cannot be verified is not promoted. Failing safe means: when in doubt, keep the version we know works.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s020_04",
+  "who": "senior",
+  "text": "Then the script brings Prometheus back and restores the stable version.",
+  "tts": "Then the script brings Prometheus back and restores the stable version.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s021_00",
+  "who": "junior",
+  "text": "Is the service itself secure?",
+  "tts": "Is the service itself secure?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s021_01",
+  "who": "senior",
+  "text": "A NetworkPolicy lets traffic in only from the same namespace and from monitoring. The security test proves it: a pod in the same namespace reaches the API, a pod in another namespace is blocked.",
+  "tts": "A network policy lets traffic in only from the same namespace and from monitoring. The security test proves it: a pod in the same namespace reaches the A-P-I, a pod in another namespace is blocked.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s021_02",
+  "who": "senior",
+  "text": "The containers run as a non-root user, with a read-only file system, no Linux capabilities, and the default seccomp profile.",
+  "tts": "The containers run as a non-root user, with a read-only file system, no Linux capabilities, and the default sec-comp profile.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s021_03",
+  "who": "senior",
+  "text": "The pods get no Kubernetes API token, because they do not need one. And the Grafana admin password is generated when the lab is deployed, so nothing secret lives in the repository.",
+  "tts": "The pods get no Kubernetes A-P-I token, because they do not need one. And the Grafana admin password is generated when the lab is deployed, so nothing secret lives in the repository.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s021_04",
+  "who": "senior",
+  "text": "In CI, the image is scanned with Trivy, and the build fails on any fixable high or critical vulnerability.",
+  "tts": "In C-I, the image is scanned with Trivy, and the build fails on any fixable high or critical vulnerability.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s022_00",
+  "who": "junior",
+  "text": "How do you know the safety net itself still works next month?",
+  "tts": "How do you know the safety net itself still works next month?",
+  "voice": "Cora"
+ },
+ {
+  "id": "s022_01",
+  "who": "senior",
+  "text": "Because it is tested on every change. The service has unit tests.",
+  "tts": "Because it is tested on every change. The service has unit tests.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s022_02",
+  "who": "senior",
+  "text": "The SLO rules are checked with promtool,",
+  "tts": "The S-L-O rules are checked with prom-tool,",
+  "voice": "Steve"
+ },
+ {
+  "id": "s022_03",
+  "who": "senior",
+  "text": "and the alerts are unit-tested: promtool feeds them made-up metrics and checks that each alert fires exactly when it should, and stays quiet when it should.",
+  "tts": "and the alerts are unit-tested: prom-tool feeds them made-up metrics and checks that each alert fires exactly when it should, and stays quiet when it should.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s022_04",
+  "who": "senior",
+  "text": "GitHub Actions runs three stages: static checks, then the image build and scan,",
+  "tts": "GitHub Actions runs three stages: static checks, then the image build and scan,",
+  "voice": "Steve"
+ },
+ {
+  "id": "s022_05",
+  "who": "senior",
+  "text": "and then the full end-to-end run on a fresh kind cluster: the good release, the two bad releases, the monitoring outage and the NetworkPolicy check. If the safety net breaks, the pipeline goes red.",
+  "tts": "and then the full end-to-end run on a fresh kind cluster: the good release, the two bad releases, the monitoring outage and the network policy check. If the safety net breaks, the pipeline goes red.",
+  "voice": "Steve"
+ },
+ {
+  "id": "s023_00",
+  "who": "junior",
+  "text": "Let me try to sum it up. First, measure what users feel: errors and latency, separately for the new version.",
+  "tts": "Let me try to sum it up. First, measure what users feel: errors and latency, separately for the new version.",
+  "voice": "Cora"
+ },
+ {
+  "id": "s023_01",
+  "who": "junior",
+  "text": "Second, agree on the limits before the release, not during the incident.",
+  "tts": "Second, agree on the limits before the release, not during the incident.",
+  "voice": "Cora"
+ },
+ {
+  "id": "s023_02",
+  "who": "junior",
+  "text": "Third, give the new version only a part of the traffic first.",
+  "tts": "Third, give the new version only a part of the traffic first.",
+  "voice": "Cora"
+ },
+ {
+  "id": "s023_03",
+  "who": "junior",
+  "text": "Fourth, let the numbers decide. Pass, promote. Fail, roll back. And no data counts as a fail.",
+  "tts": "Fourth, let the numbers decide. Pass, promote. Fail, roll back. And no data counts as a fail.",
+  "voice": "Cora"
+ },
+ {
+  "id": "s023_04",
+  "who": "senior",
+  "text": "And fifth: test the safety net itself, with real bad releases, on every change. That is the whole project. The repository has a beginner study guide with a PDF, if you want to learn every tool from zero, and you can run all of this on your own laptop with two commands.",
+  "tts": "And fifth: test the safety net itself, with real bad releases, on every change. That is the whole project. The repository has a beginner study guide with a PDF, if you want to learn every tool from zero, and you can run all of this on your own laptop with two commands.",
+  "voice": "Steve"
+ }
+]

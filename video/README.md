@@ -12,7 +12,7 @@ Two versions are built:
 
 | File (in `video/out/part01/`, not committed) | What it is |
 |---|---|
-| `safe-releases-that-undo-themselves-full.mp4` | picture, narration, original music bed and sound effects |
+| `safe-releases-that-undo-themselves-full.mp4` | picture, narration and sound effects (no music) |
 | `safe-releases-that-undo-themselves-silent.mp4` | the identical picture stream, with no audio track |
 
 Every audio asset, with its license and timestamps, is listed in [AUDIO-LICENSES.md](AUDIO-LICENSES.md).
@@ -27,14 +27,15 @@ Every audio asset, with its license and timestamps, is listed in [AUDIO-LICENSES
 | `series.py`, `scenes.py`, `demo.py` | the script: the scenes, the narration and the visuals; every number is read from the recordings |
 | `components.py` | building blocks: cards, diagrams, terminals, code excerpts |
 | `build.py` | the pipeline: page → frames → narration → encode → captions and chapters → post-production |
-| `production.py`, `audio_assets.py` | the title and end cards, and the music and sound effects (synthesised in code) |
-| `tts.ps1` | narrates each line offline with the Windows speech engine (two voices) |
+| `production.py`, `audio_assets.py` | the title and end cards, and the sound effects (synthesised in code) |
+| `voiceover/part01/` | the recorded voiceover: one FLAC per narrated step, generated with SpeakSay (senior: "Steve", junior: "Cora"), and `lines.json`, the exact text each file says |
+| `tts.ps1` | fallback narration with the Windows speech engine, used only when a video has no recorded voiceover |
 | `redact.py` | checks that nothing identifying (account IDs, private e-mail addresses) reaches a frame or a caption |
 | `youtube/part01/` | upload package: title, description with chapters, captions (SRT), thumbnail |
 
 ## Build
 
-Requirements: Windows (for `System.Speech`), Python 3 with `pygments`, `Pillow`, `numpy` and `scipy`, Node.js 22+,
+Requirements: Python 3 with `pygments`, `Pillow`, `numpy` and `scipy`, Node.js 22+,
 Microsoft Edge, and Docker (ffmpeg runs in a container pinned by digest). Recording also needs the lab's tools
 (`kind`, `kubectl`, `helm`) and the `kubectl-argo-rollouts` plugin.
 
